@@ -10,6 +10,13 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
 }
 
 define('RACINE', getcwd() . '\\');
+define('DIR_DELIMITER', '\\');
+
+function incAbs(string $path)
+{
+    include(RACINE . str_replace('/', DIR_DELIMITER, $path));
+}
+
 
 include_once("autoload.php");
 $autoload = new SplClassLoader();

@@ -11,7 +11,7 @@ class Config
 
     public function __construct(string $file)
     {
-        $conf = include(RACINE . $file);
+        $conf = incAbs($file);
         $this->addConfig($conf);
     }
 
