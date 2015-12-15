@@ -36,6 +36,6 @@ class Router
 
     public function getRoutes():array
     {
-        return ($this->dataRoutes);
+        return ($this->dataRoutes->getAll());
     }
 }
