@@ -9,7 +9,7 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
     exit();
 }
 
-const RACINE = '/';
+define('RACINE', $_SERVER["document_root"]);
 
 include_once("autoload.php");
 $autoload = new SplClassLoader();
