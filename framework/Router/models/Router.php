@@ -12,6 +12,7 @@ class Router
 {
     protected $dataRoutes;
     protected $url;
+    protected $match;
 
     public function __construct(Request $request, Config $config)
     {
@@ -37,5 +38,16 @@ class Router
     public function getRoutes():array
     {
         return ($this->dataRoutes->getAll());
+    }
+
+    public function searchRoute()
+    {
+        $find = $this->dataRoutes->search($this->uri);
+        if ($find->match() == true)
+        {
+            $this->match = $find;
+            return (true);
+        }
+        return (false);
     }
 }

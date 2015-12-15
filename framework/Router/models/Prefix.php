@@ -44,4 +44,13 @@ class Prefix extends RouterElement
     {
         return ($this->collection);
     }
+
+    public function search(string $url, string $prefix)
+    {
+        if (strlen($prefix) == 0)
+            $prefix = $this->route;
+        else
+            $prefix = $prefix . "/" . $this->route;
+        return ($this->collection->search($url, $prefix));
+    }
 }

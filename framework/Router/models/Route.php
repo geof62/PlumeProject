@@ -13,6 +13,7 @@ class Route extends RouterElement
     protected $params = [];
     protected $methods = [];
     protected $action = [];
+    protected $regex = "";
 
     public function __construct(string $route, $params, $action, $methods = [])
     {
@@ -92,5 +93,23 @@ class Route extends RouterElement
         }
         $this->methods = $methods;
         return ($this);
+    }
+
+    public function prepareRegex():self
+    {
+        $params = $this->params;
+        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($m) use ($params) {
+            return ('(' . str_replace('(', '(?:', $params[$m[1]]) . ')');
+        }, $this->route);
+        return ($this);
+    }
+
+    public function compare(string $url, string $prefix):MatchRoute
+    {
+        $find = new MatchRoute();
+        if (preg_match("#^" . $prefix . '/' . $this->regex ."$#", $url))
+            $find->find();
+        // faire la recherche de paramètres.
+        return ($find);
     }
 }

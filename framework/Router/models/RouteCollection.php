@@ -27,4 +27,20 @@ class RouteCollection extends Collection
         }
         return ($this);
     }
+
+    public function search(string $url, $prefix = ''):MatchRoute
+    {
+        foreach ($this->data as $v)
+        {
+            if ($v instanceof Route)
+            {
+                $find = $v->prepareRegex()->compare($url, $prefix);
+            }
+            else
+                $find = $v->search($url, $prefix);
+            if ($find->match() == true)
+                break;
+        }
+        return ($find);
+    }
 }
