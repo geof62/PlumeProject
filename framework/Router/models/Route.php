@@ -14,8 +14,10 @@ class Route extends RouterElement
     protected $methods = [];
     protected $action = [];
 
-    public function __construct(string $route, $params, $action, $methods = [Http::$methods['ALL']])
+    public function __construct(string $route, $params, $action, $methods = [])
     {
+        if (count($methods) == 0)
+            $methods = [Http::$methods['ALL']];
         $this->setRoute($route)
             ->setParams($params)
             ->setAction($action)
