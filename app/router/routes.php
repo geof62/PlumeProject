@@ -11,6 +11,7 @@ $routes = function(){
     $r = new RouteCollection([
         new Route("index", [], ['ctrl' => 'Global', 'action' => 'index'])
     ]);
+    return ($r);
 };
 
-return $routes;
+return ($routes);
