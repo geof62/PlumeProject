@@ -9,7 +9,7 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
     exit();
 }
 
-define('RACINE', $_SERVER["document_root"]);
+define('RACINE', $_SERVER['PHP_SELF']);
 
 include_once("autoload.php");
 $autoload = new SplClassLoader();
