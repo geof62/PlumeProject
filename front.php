@@ -14,7 +14,7 @@ define('DIR_DELIMITER', '\\');
 
 function incAbs(string $path)
 {
-    include(RACINE . str_replace('/', DIR_DELIMITER, $path));
+    return (include(RACINE . str_replace('/', DIR_DELIMITER, $path)));
 }
 
 
