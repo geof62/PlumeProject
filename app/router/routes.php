@@ -13,3 +13,5 @@ $routes = function(){
     ]);
     return ($r);
 };
+
+return ($routes);
