@@ -14,11 +14,9 @@ define('DIR_DELIMITER', '\\');
 
 function incAbs(string $path)
 {
-    echo 'ok';
     $a = include(RACINE . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $path))
     return ($a);
 }
-
 
 include_once("autoload.php");
 $autoload = new SplClassLoader();
@@ -27,3 +25,5 @@ $autoload->register();
 $config = new \framework\Config\models\Config("app/config/config.php");
 $request = new \framework\Http\models\Request($_SERVER);
 $router = new \framework\Router\models\Router($request, $config);
+
+var_dump($router->getRoutes());

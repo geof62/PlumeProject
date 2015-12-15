@@ -33,4 +33,9 @@ class Router
         $this->dataRoutes = $data;
         return ($this);
     }
+
+    public function getRoutes()
+    {
+        return ($this->dataRoutes);
+    }
 }
