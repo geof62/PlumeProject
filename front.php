@@ -9,13 +9,12 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
     exit();
 }
 
-define('RACINE', getcwd() . '\\');
+define('RACINE', getcwd());
 define('DIR_DELIMITER', '\\');
 
 function incAbs(string $path)
 {
-    var_dump($path);
-    return (include(RACINE . str_replace('/', DIR_DELIMITER, $path)));
+    return (include(RACINE . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $path)));
 }
 
 
