@@ -16,7 +16,7 @@ class Router
     public function __construct(Request $request, Config $config)
     {
         $this->setUrl($request->getUri());
-        $this->setDataRoutes(include($config ->getConfig('router/fileRoutes')));
+        $this->setDataRoutes(include($config ->getConfig('Router/fileRoutes')));
     }
 
     protected function setUrl(string $uri):self
