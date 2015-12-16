@@ -42,7 +42,7 @@ class Router
 
     public function searchRoute()
     {
-        $find = $this->dataRoutes->search($this->uri);
+        $find = $this->dataRoutes->search($this->url);
         if ($find->match() == true)
         {
             $this->match = $find;
