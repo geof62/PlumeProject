@@ -110,8 +110,9 @@ class Route extends RouterElement
     public function compare(string $url, string $prefix):MatchRoute
     {
         $find = new MatchRoute();
-        echo "#^" . $prefix . '/' . $this->regex ."$#";
-        if (preg_match("#^" . $prefix . '/' . $this->regex ."$#", $url))
+        if ($prefix != "")
+            $prefix .= '/';
+        if (preg_match("#^" . $prefix . $this->regex ."$#", $url))
         {
             $find->find();
             $ord = $this->orderParams;
