@@ -114,7 +114,6 @@ class Route extends RouterElement
             $prefix .= '\\/';
         if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
         {
-            var_dump($this->orderParams);
             $find->find();
             $ord = $this->orderParams;
             $params = [];

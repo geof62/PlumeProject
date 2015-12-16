@@ -10,7 +10,8 @@ use framework\Router\models\RouteCollection;
 $routes = function(){
     $r = new RouteCollection(function() {return ([
         new Route("index", [], ['ctrl' => 'Global', 'action' => 'index']),
-        new Route("index/{id}", ['id' => '[0-9]{2,4}'], ['ctrl' => 'Global', 'action' => 'index2'])
+        new Route("index/{id}", ['id' => '[0-9]{2,4}'], ['ctrl' => 'Global', 'action' => 'index2']),
+        new Route("index/{id}/yo-{date}", ['id' => '[0-9]{2,4}', 'date' => '[0-9]*'], ['ctrl' => 'Global', 'action' => 'index3'])
         // tester les méthodes
     ]);
     });
