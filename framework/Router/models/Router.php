@@ -51,6 +51,13 @@ class Router
         return (false);
     }
 
+    public function getMatch():bool
+    {
+        if ($this->match->find() == true)
+            return (true);
+        return (false);
+    }
+
     public function getMatchRoute():MatchRoute
     {
         return ($this->match);

@@ -28,4 +28,9 @@ $router = new \framework\Router\models\Router($request, $config);
 
 $router->searchRoute();
 
-var_dump($router->getMatchRoute());
+if ($router->getMatch())
+{
+    var_dump($router->getMatchRoute());
+}
+else
+    echo 'no find route';
