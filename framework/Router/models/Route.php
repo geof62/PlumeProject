@@ -65,7 +65,7 @@ class Route extends RouterElement
         foreach ($mat as $v)
         {
             printf(trim($v, '{}') . "<br>");
-            if (!array_key_exists($v, $params))
+            if (!array_key_exists(trim($v, '{}'), $params))
                 throw new Exception("Parameter inexistant " . trim($v, '{}'));
         }
         return ($this);
