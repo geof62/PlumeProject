@@ -39,4 +39,11 @@ abstract class Http
             return (true);
         return (false);
     }
+
+    static public function allowMethod(int $method, array $methods)
+    {
+        if (in_array($method, $methods))
+            return (true);
+        return (false);
+    }
 }

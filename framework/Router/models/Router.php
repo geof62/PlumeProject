@@ -6,6 +6,7 @@ namespace framework\Router\models;
 
 use framework\Config\models\Config;
 use framework\Exceptions\models\Exception;
+use framework\Http\models\Http;
 use framework\Http\models\Request;
 
 class Router
@@ -14,10 +15,12 @@ class Router
     protected $url;
     protected $match;
     protected $find = false;
+    protected $method;
 
     public function __construct(Request $request, Config $config)
     {
         $this->setUrl($request->getUri());
+        $this->setMethod($request->getMethod());
         $this->setDataRoutes(incAbs($config ->getConfig('Router/fileRoutes')));
     }
 
@@ -27,13 +30,18 @@ class Router
         return ($this);
     }
 
-    protected function
-    setDataRoutes(callable $data):self
+    protected function    setDataRoutes(callable $data):self
     {
         $data = $data();
         if (!($data instanceof RouteCollection))
             throw new Exception("Invalid RouteCollection");
         $this->dataRoutes = $data;
+        return ($this);
+    }
+
+    protected function setMethod(string $method):self
+    {
+        $this->method = Http::getMethod($method);
         return ($this);
     }
 
@@ -44,7 +52,7 @@ class Router
 
     public function searchRoute()
     {
-        $find = $this->dataRoutes->search($this->url);
+        $find = $this->dataRoutes->search($this->url, $this->method);
         if ($find->match() == true)
         {
             $this->match = $find;

@@ -28,7 +28,7 @@ class RouteCollection extends Collection
         return ($this);
     }
 
-    public function search(string $url, $prefix = ''):MatchRoute
+    public function search(string $url, $method, $prefix = ''):MatchRoute
     {
         foreach ($this->data as $v)
         {
@@ -36,7 +36,7 @@ class RouteCollection extends Collection
                 unset($find);
             if ($v instanceof Route)
             {
-                $find = $v->prepareRegex()->compare($url, $prefix);
+                $find = $v->prepareRegex()->compare($url, $prefix, $method);
             }
             else
                 $find = $v->search($url, $prefix);

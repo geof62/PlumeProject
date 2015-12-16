@@ -107,9 +107,11 @@ class Route extends RouterElement
         return ($this);
     }
 
-    public function compare(string $url, string $prefix):MatchRoute
+    public function compare(string $url, string $prefix, int $method):MatchRoute
     {
         $find = new MatchRoute();
+        if (!Http::allowMethod($method, $this->methods))
+            return ($find);
         if ($prefix != "")
             $prefix .= '\\/';
         if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
