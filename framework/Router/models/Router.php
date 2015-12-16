@@ -39,9 +39,9 @@ class Router
         return ($this);
     }
 
-    protected function setMethod(string $method):self
+    protected function setMethod(int $method):self
     {
-        $this->method = Http::getMethod($method);
+        $this->method = $method;
         return ($this);
     }
 
