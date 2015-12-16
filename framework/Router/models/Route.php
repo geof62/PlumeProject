@@ -87,7 +87,7 @@ class Route extends RouterElement
     {
         foreach ($methods as $v)
         {
-            if (!Http::isMethod($v))
+            if (!Http::isMethodInt($v))
             {
                 throw new Exception("invalid Method : " . $v);
             }

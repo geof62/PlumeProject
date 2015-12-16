@@ -40,6 +40,13 @@ abstract class Http
         return (false);
     }
 
+    static public function isMethodInt(int $method):bool
+    {
+        if (in_array($method, self::$methods))
+            return (true);
+        return (false);
+    }
+
     static public function allowMethod(int $method, array $methods)
     {
         if (in_array(Http::getMethod('ALL'), $methods))
