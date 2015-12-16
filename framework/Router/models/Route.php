@@ -19,7 +19,7 @@ class Route extends RouterElement
     public function __construct(string $route, $params, $action, $methods = [])
     {
         if (count($methods) == 0)
-            $methods = [Http::$methods['ALL']];
+            $methods = ['ALL'];
         $this->setRoute($route)
             ->setParams($params)
             ->setAction($action)
@@ -87,7 +87,7 @@ class Route extends RouterElement
     {
         foreach ($methods as $v)
         {
-            if (!Http::isMethodInt($v))
+            if (!Http::isMethod($v))
             {
                 throw new Exception("invalid Method : " . $v);
             }
