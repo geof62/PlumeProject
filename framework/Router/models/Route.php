@@ -100,11 +100,11 @@ class Route extends RouterElement
     {
         $params = $this->params;
         $ord = &$this->orderParams;
-        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($m) use ($params, $ord) {
-            $ord[] = $m[1];
-            var_dump($m);
+        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($matches) use ($params, $ord) {
+            $ord[] = $matches[1];
+            var_dump($matches);
             echo '<br>';
-            return ('(' . str_replace('(', '(?:', $params[$m[1]]) . ')');
+            return ('(' . str_replace('(', '(?:', $params[$matches[1]]) . ')');
         }, $this->route);
         return ($this);
     }
@@ -114,7 +114,6 @@ class Route extends RouterElement
         $find = new MatchRoute();
         if ($prefix != "")
             $prefix .= '\\/';
-        echo "#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#" . '<br>' . $url . '<br>';
         if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
         {
             $find->find();
