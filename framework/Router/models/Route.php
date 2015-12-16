@@ -100,7 +100,7 @@ class Route extends RouterElement
     {
         $params = $this->params;
         $ord = &$this->orderParams;
-        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($matches) use ($params, $ord) {
+        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($matches) use ($params, &$ord) {
             $ord[] = $matches[1];
             return ('(' . str_replace('(', '(?:', $params[$matches[1]]) . ')');
         }, $this->route);
