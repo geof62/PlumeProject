@@ -42,6 +42,8 @@ abstract class Http
 
     static public function allowMethod(int $method, array $methods)
     {
+        if (in_array(Http::getMethod('ALL'), $methods))
+            return (true);
         if (in_array($method, $methods))
             return (true);
         return (false);
