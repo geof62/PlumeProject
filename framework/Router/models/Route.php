@@ -112,6 +112,7 @@ class Route extends RouterElement
         $find = new MatchRoute();
         if ($prefix != "")
             $prefix .= '/';
+        echo "#^" . $prefix . $this->regex ."$#";
         if (preg_match("#^" . $prefix . $this->regex ."$#", $url))
         {
             $find->find();
