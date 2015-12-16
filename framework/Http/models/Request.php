@@ -14,7 +14,7 @@ class Request extends Http
      */
     public function __construct(array $server)
     {
-
+        $this->uri = $server['REQUEST_URI'];
     }
 
     public function getMethods():int
