@@ -85,12 +85,13 @@ class Route extends RouterElement
 
     public function setMethods(array $methods):self
     {
-        foreach ($methods as $v)
+        foreach ($methods as $k => $v)
         {
             if (!Http::isMethod($v))
             {
                 throw new Exception("invalid Method : " . $v);
             }
+            $methods[$v] = Http::getMethod($v);
         }
         $this->methods = $methods;
         return ($this);
