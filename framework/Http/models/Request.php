@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace framework\Http\models;
 
+use framework\Router\models\RouterElement;
+
 class Request extends Http
 {
     protected $method = 1;
@@ -14,7 +16,7 @@ class Request extends Http
      */
     public function __construct(array $server)
     {
-        $this->uri = $server['REQUEST_URI'];
+        $this->uri = RouterElement::cleanRoute($server['REQUEST_URI']);
     }
 
     public function getMethods():int
