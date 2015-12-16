@@ -91,7 +91,7 @@ class Route extends RouterElement
             {
                 throw new Exception("invalid Method : " . $v);
             }
-            $methods[$v] = Http::getMethod($v);
+            $methods[$k] = Http::getMethod($v);
         }
         $this->methods = $methods;
         return ($this);
