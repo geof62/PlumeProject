@@ -64,7 +64,7 @@ class Route extends RouterElement
         preg_match("#{[a-zA-Z]+}#", $this->route, $mat);
         foreach ($mat as $v)
         {
-            if (!in_array($v, $params))
+            if (!array_key_exists($v, $params))
                 throw new Exception("Parameter inexistant " . $v);
         }
         return ($this);
