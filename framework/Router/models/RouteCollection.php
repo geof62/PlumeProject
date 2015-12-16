@@ -32,6 +32,8 @@ class RouteCollection extends Collection
     {
         foreach ($this->data as $v)
         {
+            if (!empty($find))
+                unset($find);
             if ($v instanceof Route)
             {
                 $find = $v->prepareRegex()->compare($url, $prefix);

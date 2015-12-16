@@ -14,6 +14,7 @@ class Route extends RouterElement
     protected $methods = [];
     protected $action = [];
     protected $regex = "";
+    protected $orderParams = [];
 
     public function __construct(string $route, $params, $action, $methods = [])
     {
@@ -98,7 +99,9 @@ class Route extends RouterElement
     public function prepareRegex():self
     {
         $params = $this->params;
-        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($m) use ($params) {
+        $ord = &$this->orderParams;
+        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($m) use ($params, $ord) {
+            $ord[] = $m[1];
             return ('(' . str_replace('(', '(?:', $params[$m[1]]) . ')');
         }, $this->route);
         return ($this);
@@ -108,8 +111,18 @@ class Route extends RouterElement
     {
         $find = new MatchRoute();
         if (preg_match("#^" . $prefix . '/' . $this->regex ."$#", $url))
+        {
             $find->find();
-        // faire la recherche de paramètres.
+            $ord = $this->orderParams;
+            $params = &[];
+            preg_replace_callback("#^" . $this->regex . "$#", function ($matches) use ($ord, $params) {
+                foreach ($matches as $k => $v) {
+                    if ($k != 0)
+                        $params[$ord[$k - 1]] = $v;
+                }
+            }, $url);
+            $find->setParams($params);
+        }
         return ($find);
     }
 }

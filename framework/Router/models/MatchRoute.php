@@ -6,13 +6,12 @@ namespace framework\Router\models;
 
 class MatchRoute
 {
-    protected $find;
+    protected $find = false;
     protected $route;
     protected $findParams = [];
 
     public function __construct()
     {
-        $this->find = false;
     }
 
     public function find():self
@@ -23,6 +22,18 @@ class MatchRoute
 
     public function match():bool
     {
+        return ($this->find);
+    }
 
+    public function setRoute(Route $route):self
+    {
+        $this->route = $route;
+        return ($this);
+    }
+
+    public function setParams(array $params):self
+    {
+        $this->findParams = $params;
+        return ($this);
     }
 }
