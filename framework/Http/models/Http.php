@@ -33,9 +33,9 @@ abstract class Http
             return (array_keys(self::$methods, self::$defaultMethod)[0]);
     }
 
-    static public function isMethod(int $method):bool
+    static public function isMethod(string $method):bool
     {
-        if (in_array($method, self::$methods))
+        if (array_key_exists($method, self::$methods))
             return (true);
         return (false);
     }
