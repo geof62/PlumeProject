@@ -17,6 +17,7 @@ class Request extends Http
     public function __construct(array $server)
     {
         $this->uri = RouterElement::cleanRoute($server['REQUEST_URI']);
+        $this->method= Http::getMethod($server['REQUEST_METHOD']);
     }
 
     public function getMethods():int
