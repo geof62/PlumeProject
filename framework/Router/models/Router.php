@@ -50,4 +50,9 @@ class Router
         }
         return (false);
     }
+
+    public function getMatchRoute():MatchRoute
+    {
+        return ($this->match);
+    }
 }
