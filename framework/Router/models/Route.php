@@ -114,8 +114,8 @@ class Route extends RouterElement
         {
             $find->find();
             $ord = $this->orderParams;
-            $params = &[];
-            preg_replace_callback("#^" . $this->regex . "$#", function ($matches) use ($ord, $params) {
+            $params = [];
+            preg_replace_callback("#^" . $this->regex . "$#", function ($matches) use ($ord, &$params) {
                 foreach ($matches as $k => $v) {
                     if ($k != 0)
                         $params[$ord[$k - 1]] = $v;
