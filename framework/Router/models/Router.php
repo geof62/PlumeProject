@@ -20,7 +20,7 @@ class Router
     public function __construct(Request $request, Config $config)
     {
         $this->setUrl($request->getUri());
-        $this->setMethod($request->getMethod());
+        $this->setMethod($request->getMethodR());
         $this->setDataRoutes(incAbs($config ->getConfig('Router/fileRoutes')));
     }
 
