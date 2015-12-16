@@ -28,4 +28,4 @@ $router = new \framework\Router\models\Router($request, $config);
 
 $router->searchRoute();
 
-var_dump($router);
+var_dump($router->getRoutes());
