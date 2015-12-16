@@ -110,6 +110,7 @@ class Route extends RouterElement
     public function compare(string $url, string $prefix, int $method):MatchRoute
     {
         $find = new MatchRoute();
+        printf("%d<br>", $method);
         if (!Http::allowMethod($method, $this->methods))
             return ($find);
         if ($prefix != "")
