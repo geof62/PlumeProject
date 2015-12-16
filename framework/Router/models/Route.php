@@ -102,8 +102,6 @@ class Route extends RouterElement
         $ord = &$this->orderParams;
         $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($matches) use ($params, $ord) {
             $ord[] = $matches[1];
-            var_dump($matches);
-            echo '<br>';
             return ('(' . str_replace('(', '(?:', $params[$matches[1]]) . ')');
         }, $this->route);
         return ($this);
@@ -116,6 +114,7 @@ class Route extends RouterElement
             $prefix .= '\\/';
         if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
         {
+            var_dump($this->orderParams);
             $find->find();
             $ord = $this->orderParams;
             $params = [];
