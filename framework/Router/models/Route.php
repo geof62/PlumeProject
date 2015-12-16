@@ -112,8 +112,7 @@ class Route extends RouterElement
         $find = new MatchRoute();
         if ($prefix != "")
             $prefix .= '\\/';
-        echo "#^" . $prefix . $this->regex ."$#" . '<br>' . str_replace('/', '\\/', $url) . '<br>';
-        if (preg_match("#^" . $prefix . $this->regex ."$#", $url))
+        if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
         {
             $find->find();
             $ord = $this->orderParams;
