@@ -64,7 +64,6 @@ class Route extends RouterElement
         preg_match("#{[a-zA-Z]+}#", $this->route, $mat);
         foreach ($mat as $v)
         {
-            printf(trim($v, '{}') . "<br>");
             if (!array_key_exists(trim($v, '{}'), $params))
                 throw new Exception("Parameter inexistant " . trim($v, '{}'));
         }
@@ -113,8 +112,7 @@ class Route extends RouterElement
         $find = new MatchRoute();
         if ($prefix != "")
             $prefix .= '/';
-        echo "#^" . $prefix . $this->regex ."$#";
-        echo '<br>' . $url . '<br>';
+        echo "#^" . $prefix . $this->regex ."$#" . '<br>' . $url . '<br>';
         if (preg_match("#^" . $prefix . $this->regex ."$#", $url))
         {
             $find->find();
