@@ -27,3 +27,5 @@ $request = new \framework\Http\models\Request($_SERVER);
 $router = new \framework\Router\models\Router($request, $config);
 
 $router->searchRoute();
+
+var_dump($router);
