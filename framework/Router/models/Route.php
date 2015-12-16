@@ -51,7 +51,7 @@ class Route extends RouterElement
     {
         foreach ($params as $k => $v)
         {
-            if (!preg_match("#[a-zA-Z]+#", $k) || !preg_match("#$v#", null))
+            if (!preg_match("#[a-zA-Z]+#", $k) || preg_match("#$v#", "") === false)
                 throw new Exception("Invalid paramter : " . $k);
         }
         $this->validParams($params);
