@@ -13,6 +13,7 @@ class Router
     protected $dataRoutes;
     protected $url;
     protected $match;
+    protected $find = false;
 
     public function __construct(Request $request, Config $config)
     {
@@ -26,7 +27,8 @@ class Router
         return ($this);
     }
 
-    protected function setDataRoutes(callable $data):self
+    protected function
+    setDataRoutes(callable $data):self
     {
         $data = $data();
         if (!($data instanceof RouteCollection))
@@ -46,6 +48,7 @@ class Router
         if ($find->match() == true)
         {
             $this->match = $find;
+            $this->find = true;
             return (true);
         }
         return (false);
@@ -53,9 +56,7 @@ class Router
 
     public function getMatch():bool
     {
-        if ($this->match->find() == true)
-            return (true);
-        return (false);
+        return ($this->find);
     }
 
     public function getMatchRoute():MatchRoute
