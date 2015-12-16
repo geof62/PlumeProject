@@ -111,6 +111,8 @@ class Route extends RouterElement
     {
         $find = new MatchRoute();
         printf("%d<br>", $method);
+        var_dump($this->methods);
+        echo '<br>';
         if (!Http::allowMethod($method, $this->methods))
             return ($find);
         if ($prefix != "")
