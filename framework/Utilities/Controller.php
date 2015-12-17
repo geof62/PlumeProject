@@ -22,4 +22,9 @@ abstract class Controller implements ControllerInterface
         $this->response->setTemp(new $tmp());
         return ($this);
     }
+
+    public function put()
+    {
+        $this->response->put();
+    }
 }
