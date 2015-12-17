@@ -39,6 +39,7 @@ abstract class HtmlTemplate extends Template
             $view = RACINE . DIR_DELIMITER . "General" . DIR_DELIMITER . "View" . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[0]);
         else
             $view = RACINE . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[0]) . DIR_DELIMITER . 'View' . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[1]);
+        echo $view . '<br>';
         if (!file_exists($view))
             throw new Exception("Invalid view file");
         $this->setData(file_get_contents($view));
