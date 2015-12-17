@@ -23,14 +23,4 @@ $autoload = new SplClassLoader();
 $autoload->register();
 
 $config = new \framework\Config\models\Config("app/config/config.php");
-$request = new \framework\Http\models\Request($_SERVER);
-$router = new \framework\Router\models\Router($request, $config);
-
-$router->searchRoute();
-
-if ($router->getMatch())
-{
-    var_dump($router->getMatchRoute());
-}
-else
-    echo 'no find route';
+$request = new \framework\Http\models\Request($_SERVER, $config);

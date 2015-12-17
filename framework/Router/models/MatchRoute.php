@@ -36,4 +36,14 @@ class MatchRoute
         $this->findParams = $params;
         return ($this);
     }
+
+    public function getController()
+    {
+        return ($this->route->getController());
+    }
+
+    public function getAction()
+    {
+        return ($this->route->getAction());
+    }
 }
