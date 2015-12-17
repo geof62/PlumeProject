@@ -55,7 +55,7 @@ class Router
         $find = $this->dataRoutes->search($this->url, $this->method);
         if ($find->match() == true)
         {
-            $this->match = $find
+            $this->match = $find;
             $this->find = true;
             return (true);
         }
