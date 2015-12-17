@@ -118,6 +118,7 @@ class Route extends RouterElement
         if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
         {
             $find->find();
+            $find->setRoute($this);
             $ord = $this->orderParams;
             $params = [];
             preg_replace_callback("#^" . $this->regex . "$#", function ($matches) use ($ord, &$params) {
