@@ -36,7 +36,7 @@ abstract class HtmlTemplate extends Template
     {
         $view = explode(':', $view);
         if (count($view) == 1)
-            $view = RACINE . DIR_DELIMITER . "General" . DIR_DELIMITER . "View" . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[0]);
+            $view = RACINE . DIR_DELIMITER . "src" . DIR_DELIMITER . "General" . DIR_DELIMITER . "View" . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[0]);
         else
             $view = RACINE . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[0]) . DIR_DELIMITER . 'View' . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $view[1]);
         echo $view . '<br>';
