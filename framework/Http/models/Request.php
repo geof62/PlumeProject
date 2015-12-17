@@ -23,7 +23,8 @@ class Request extends Http
     {
         $this->hydrate($server)
             ->loadRouter($config)
-            ->loadResponse();
+            ->loadResponse()
+            ->put();
     }
 
     public function hydrate(array $server):self
@@ -81,6 +82,12 @@ class Request extends Http
         $ctrl = new $ctrl();
         $act = $this->router->getMatchRoute()->getAction();
         $this->response = $ctrl->$act();
+        return ($this);
+    }
+
+    protected function put():self
+    {
+        $this->response->put();
         return ($this);
     }
 }
