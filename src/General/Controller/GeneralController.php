@@ -9,7 +9,7 @@ use framework\Utilities\Controller;
 
 class GeneralController extends Controller
 {
-    public function loadResponse():self
+    public function loadResponse():Controller
     {
         $this->response = new Response();
         return ($this);
