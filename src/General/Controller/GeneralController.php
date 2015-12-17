@@ -15,9 +15,10 @@ class GeneralController extends Controller
         return ($this);
     }
 
-    public function index()
+    public function index():self
     {
         $this->loadResponse();
         $this->loadTemplate('General');
+        return ($this);
     }
 }
