@@ -22,7 +22,8 @@ class Request extends Http
     public function __construct(array $server, Config $config)
     {
         $this->hydrate($server)
-            ->loadRouter($config);
+            ->loadRouter($config)
+            ->loadResponse();
     }
 
     public function hydrate(array $server):self
@@ -64,7 +65,7 @@ class Request extends Http
         return ($this);
     }
 
-    protected function loadResponse(Config $config):self
+    protected function loadResponse():self
     {
         if ($this->router->find->match() == false)
             new Exception("404 page not found");
