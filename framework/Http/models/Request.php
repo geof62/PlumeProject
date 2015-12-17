@@ -68,21 +68,15 @@ class Request extends Http
     protected function loadResponse():self
     {
         if ($this->router->getMatch() == false)
-            new Exception("404 page not found");
+            throw new Exception("404 page not found");
         if (!class_exists($this->router->getMatchRoute()->getController()))
-            new Exception("invalid controller for this url");
-        else
-        {
-            if (!method_exists($this->router->getMatchRoute()->getController(), $this->router->getMatchRoute()->getAction()))
-                new Exception("invalid action for this url");
-            else
-            {
-                $ctrl = $this->router->getMatchRoute()->getController();
-                $ctrl = new $ctrl();
-                $act = $this->router->getMatchRoute()->getAction();
-                $this->response = $ctrl->$act();
-            }
-        }
+            throw new Exception("invalid controller for this url");
+        if (!method_exists($this->router->getMatchRoute()->getController(), $this->router->getMatchRoute()->getAction()))
+            throw new Exception("invalid action for this url");
+        $ctrl = $this->router->getMatchRoute()->getController();
+        $ctrl = new $ctrl();
+        $act = $this->router->getMatchRoute()->getAction();
+        $this->response = $ctrl->$act();
         return ($this);
     }
 }
