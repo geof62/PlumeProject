@@ -73,7 +73,7 @@ class Request extends Http
         if (count($_ctrl) == 2)
             $ctrl = 'src\\' . $_ctrl[0] . '\\Controller\\' . $_ctrl[1] . 'Controller';
         else
-            $ctrl = 'src\\General\\Controller' . $_ctrl[0] . 'Controller';
+            $ctrl = 'src\\General\\Controller\\' . $_ctrl[0] . 'Controller';
         echo $ctrl . '<br>';
         if (!class_exists($ctrl))
             throw new Exception("invalid controller for this url");
