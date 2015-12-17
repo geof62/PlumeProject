@@ -82,6 +82,7 @@ class Request extends Http
         $ctrl = new $ctrl();
         $act = $this->router->getMatchRoute()->getAction();
         $this->response = $ctrl->$act();
+        var_dump($this->response);
         return ($this);
     }
 
