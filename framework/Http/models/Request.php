@@ -74,6 +74,7 @@ class Request extends Http
             $ctrl = 'src\\' . $_ctrl[0] . '\\Controller\\' . $_ctrl[1] . 'Controller';
         else
             $ctrl = 'src\\General\\Controller' . $_ctrl[0] . 'Controller';
+        echo $ctrl . '<br>';
         if (!class_exists($ctrl))
             throw new Exception("invalid controller for this url");
         if (!method_exists($ctrl, $this->router->getMatchRoute()->getAction()))
