@@ -9,8 +9,6 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
     exit();
 }
 
-$_GET['url'] = 'index';
-
 define('RACINE', getcwd());
 define('DIR_DELIMITER', '\\');
 
