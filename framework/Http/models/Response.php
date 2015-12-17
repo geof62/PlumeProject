@@ -24,7 +24,7 @@ class Response
     {
     }
 
-    protected function setTemp(Template $tmp):self
+    public function setTemp(Template $tmp):self
     {
         $this->tmp = $tmp;
         return ($this);
