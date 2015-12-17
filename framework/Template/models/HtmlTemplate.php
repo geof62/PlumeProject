@@ -20,7 +20,7 @@ abstract class HtmlTemplate extends Template
     {
     }
 
-    public function setHeaderType(string $string):self
+    public function setHeaderType(string $string):Template
     {
         $this->headerType = Response::HeadersType['html'];
         return ($this);

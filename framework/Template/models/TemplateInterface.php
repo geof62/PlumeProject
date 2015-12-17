@@ -6,7 +6,7 @@ namespace framework\Template\models;
 
 Interface TemplateInterface
 {
-    public function setHeaderType(string $string):self;
+    public function setHeaderType(string $string):Template;
 
     public function render():string;
 }
