@@ -29,4 +29,9 @@ class Response
         $this->tmp = $tmp;
         return ($this);
     }
+
+    public function put()
+    {
+        echo $this->temp->render();
+    }
 }
