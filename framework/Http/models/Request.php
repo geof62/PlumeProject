@@ -71,7 +71,7 @@ class Request extends Http
             new Exception("404 page not found");
         if (!class_exists($this->router->getMatchRoute()->getController()))
             new Exception("invalid controller for this url");
-        if (!method_exists($this->router->getMatchRoute()->getController(), $this->router->getRouteMatch()->getAction()))
+        if (!method_exists($this->router->getMatchRoute()->getController(), $this->router->getMatchRoute()->getAction()))
             new Exception("invalid action for this url");
         $ctrl = $this->router->find->getController();
         $ctrl = $ctrl();
