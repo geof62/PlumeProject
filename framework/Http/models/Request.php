@@ -73,9 +73,9 @@ class Request extends Http
             new Exception("invalid controller for this url");
         if (!method_exists($this->router->getMatchRoute()->getController(), $this->router->getMatchRoute()->getAction()))
             new Exception("invalid action for this url");
-        $ctrl = $this->router->find->getController();
+        $ctrl = $this->router->getMatchRoute()->getController();
         $ctrl = $ctrl();
-        $this->response = $ctrl->$this->router->find->getAction();
+        $this->response = $ctrl->$this->router->getMatchRoute()->getAction();
         return ($this);
     }
 }
