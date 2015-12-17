@@ -6,5 +6,5 @@ namespace framework\Utilities;
 
 interface ControllerInterface
 {
-    public function loadResponse():self;
+    public function loadResponse():Controller;
 }
