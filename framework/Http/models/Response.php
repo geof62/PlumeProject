@@ -26,7 +26,7 @@ class Response
 
     public function setTemp(Template $tmp):self
     {
-        $this->tmp = $tmp;
+        $this->temp = $tmp;
         return ($this);
     }
 
