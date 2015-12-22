@@ -78,7 +78,7 @@ class Request extends Http
             $this->response->setTemp((new CssTemplate($this->router->getCss())));
             return ($this);
         }
-        else
+        else if ($this->router->isJs())
         {
             $this->response = new Response('js');
             $this->response->setTemp((new JsTemplate($this->router->getJs())));
