@@ -62,6 +62,8 @@ class Router
             }
             return (false);
         }
+        else
+            exit(); 
     }
 
     public function filter(Config $config):bool
