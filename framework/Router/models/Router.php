@@ -85,8 +85,8 @@ class Router
 
     public function loadCss(string $css)
     {
+        echo 'yo';
         $this->css = $css;
-
     }
 
     public function isJs():bool
