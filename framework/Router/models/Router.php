@@ -71,8 +71,8 @@ class Router
         else if (preg_match("#^" . $config->getConfig('Router/stylesPrefix') . "#", $this->url))
             $this->loadCss(str_replace($config->getConfig('Router/stylesPrefix'), $this->url));
         else
-            return (true);
-        return (false);
+            return (false);
+        return (true);
     }
 
     public function loadJs(string $js)
