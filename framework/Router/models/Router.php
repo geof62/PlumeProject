@@ -50,16 +50,39 @@ class Router
         return ($this->dataRoutes->getAll());
     }
 
-    public function searchRoute()
+    public function searchRoute(Config $config)
     {
-        $find = $this->dataRoutes->search($this->url, $this->method);
-        if ($find->match() == true)
+        if ($this->filter($config) == false)
         {
-            $this->match = $find;
-            $this->find = true;
-            return (true);
+            $find = $this->dataRoutes->search($this->url, $this->method);
+            if ($find->match() == true) {
+                $this->match = $find;
+                $this->find = true;
+                return (true);
+            }
+            return (false);
         }
+    }
+
+    public function filter(Config $config):bool
+    {
+        if (preg_match("#^" . $config->getConfig('Router/scryptsPrefix'), $this->url))
+            $this->loadJs(str_replace($config->getConfig('Router/scryptsPrefix'), $this->url));
+        else if (preg_match("#^" . $config->getConfig('Router/stylesPrefix'), $this->url))
+            $this->loadCss(str_replace($config->getConfig('Router/stylesPrefix'), $this->url));
+        else
+            return (true);
         return (false);
+    }
+
+    public function loadJs(string $js)
+    {
+
+    }
+
+    public function loadCss(string $css)
+    {
+
     }
 
     public function getMatch():bool

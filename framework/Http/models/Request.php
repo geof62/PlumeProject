@@ -62,7 +62,7 @@ class Request extends Http
     protected function loadRouter(Config $config):self
     {
         $this->router = new Router($this, $config);
-        $this->router->searchRoute();
+        $this->router->searchRoute($config);
         return ($this);
     }
 
