@@ -66,7 +66,8 @@ class Router
 
     public function filter(Config $config):bool
     {
-        if (preg_match("#^" . $config->getConfig('Router/scryptsPrefix') . "#", $this->url))
+        echo $config->getConfig('Router/scriptsPrefix').'<br>';
+        if (preg_match("#^" . $config->getConfig('Router/scriptsPrefix') . "#", $this->url))
             $this->loadJs(str_replace($config->getConfig('Router/scryptsPrefix'), $this->url));
         else if (preg_match("#^" . $config->getConfig('Router/stylesPrefix') . "#", $this->url))
             $this->loadCss(str_replace($config->getConfig('Router/stylesPrefix'), $this->url));

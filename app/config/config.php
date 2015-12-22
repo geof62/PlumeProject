@@ -4,7 +4,7 @@ $config = [
     'Router' => [
         'fileRoutes' => 'app/router/routes.php',
         'stylesPrefix' => 'web/css',
-        'scryptsPrefix' => 'web/js'
+        'scriptsPrefix' => 'web/js'
     ],
     'Database' => [
         'host' => 'localhost',
