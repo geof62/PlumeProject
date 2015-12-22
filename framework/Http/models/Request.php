@@ -15,12 +15,14 @@ class Request extends Http
     protected $uri = "";
     protected $router;
     protected $response;
+    protected $config;
 
     /*
      * $_SERVER is specify to permiss to load an other configuration
      */
     public function __construct(array $server, Config $config)
     {
+        $this->config = $config;
         $this->hydrate($server)
             ->loadRouter($config)
             ->loadResponse()
@@ -79,7 +81,7 @@ class Request extends Http
             throw new Exception("invalid controller for this url");
         if (!method_exists($ctrl, $this->router->getMatchRoute()->getAction()))
             throw new Exception("invalid action for this url");
-        $ctrl = new $ctrl();
+        $ctrl = new $ctrl($this->config);
         $act = $this->router->getMatchRoute()->getAction();
         $this->response = $ctrl->$act();
         return ($this);
