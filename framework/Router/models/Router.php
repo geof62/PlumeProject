@@ -64,7 +64,6 @@ class Router
             }
             return (false);
         }
-        echo 'ok';
         return (true);
     }
 

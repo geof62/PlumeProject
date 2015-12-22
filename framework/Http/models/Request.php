@@ -73,8 +73,6 @@ class Request extends Http
 
     protected function loadResponse():self
     {
-        if ($this->router->getMatch() == false)
-            throw new Exception("404 page not found");
         if ($this->router->isCss() or $this->router->isJs())
         {
             $this->response = new Response();
@@ -84,6 +82,8 @@ class Request extends Http
                 $this->response->setTemp((new JsTemplate($this->router->getJs())));
             return ($this);
         }
+        if ($this->router->getMatch() == false)
+            throw new Exception("404 page not found");
         $_ctrl = explode(':', $this->router->getMatchRoute()->getController());
         if (count($_ctrl) == 2)
             $ctrl = 'src\\' . $_ctrl[0] . '\\Controller\\' . $_ctrl[1] . 'Controller';
