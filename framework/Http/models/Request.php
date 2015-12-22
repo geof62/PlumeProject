@@ -75,7 +75,7 @@ class Request extends Http
     {
         if ($this->router->getMatch() == false)
             throw new Exception("404 page not found");
-        if ($this->router->isCss or $this->router->isJs())
+        if ($this->router->isCss() or $this->router->isJs())
         {
             $this->response = new Response();
             if ($this->router->isCss())
