@@ -32,7 +32,7 @@ class Router
         return ($this);
     }
 
-    protected function    setDataRoutes(callable $data):self
+    protected function setDataRoutes(callable $data):self
     {
         $data = $data();
         if (!($data instanceof RouteCollection))
@@ -64,6 +64,7 @@ class Router
             }
             return (false);
         }
+        echo 'ok';
         return (true);
     }
 
@@ -85,7 +86,6 @@ class Router
 
     public function loadCss(string $css)
     {
-        echo 'yo';
         $this->css = $css;
     }
 
