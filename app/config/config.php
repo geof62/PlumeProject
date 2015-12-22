@@ -2,7 +2,7 @@
 
 $config = [
     'site' => [
-      'baseUrl' => 'http://http://geof2.azurewebsites.net/'
+      'baseUrl' => 'http://geof2.azurewebsites.net/'
     ],
     'Router' => [
         'fileRoutes' => 'app/router/routes.php',
