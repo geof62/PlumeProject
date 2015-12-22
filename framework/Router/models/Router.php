@@ -68,7 +68,7 @@ class Router
     {
         if (preg_match("#^" . $config->getConfig('Router/scryptsPrefix') . "#", $this->url))
             $this->loadJs(str_replace($config->getConfig('Router/scryptsPrefix'), $this->url));
-        else if (preg_match("#^" . $config->getConfig('Router/stylesPrefix' . "#"), $this->url))
+        else if (preg_match("#^" . $config->getConfig('Router/stylesPrefix') . "#", $this->url))
             $this->loadCss(str_replace($config->getConfig('Router/stylesPrefix'), $this->url));
         else
             return (true);
