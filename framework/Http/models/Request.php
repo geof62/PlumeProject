@@ -73,13 +73,15 @@ class Request extends Http
 
     protected function loadResponse():self
     {
-        if ($this->router->isCss() or $this->router->isJs())
+        if ($this->router->isCss()) {
+            $this->response = new Response('css');
+            $this->response->setTemp((new CssTemplate($this->router->getCss())));
+            return ($this);
+        }
+        else
         {
-            $this->response = new Response();
-            if ($this->router->isCss())
-                $this->response->setTemp((new CssTemplate($this->router->getCss())));
-            else
-                $this->response->setTemp((new JsTemplate($this->router->getJs())));
+            $this->response = new Response('js');
+            $this->response->setTemp((new JsTemplate($this->router->getJs())));
             return ($this);
         }
         if ($this->router->getMatch() == false)
