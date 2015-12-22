@@ -19,9 +19,16 @@ class Response
     ];
 
     protected $temp;
+    protected $contentType;
 
-    public function __construct()
+    public function __construct($head = 'html')
     {
+        $this->contentType = $head;
+    }
+
+    public function header():self
+    {
+        header('Content-type: ' . self::HeadersType[$this->contentType]);
     }
 
     public function setTemp(Template $tmp):self
@@ -32,6 +39,7 @@ class Response
 
     public function put()
     {
+        $this->header();
         echo $this->temp->render();
     }
 }

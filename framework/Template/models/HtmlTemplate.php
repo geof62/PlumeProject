@@ -23,10 +23,9 @@ abstract class HtmlTemplate extends Template
         $this->config = $config;
     }
 
-    public function setHeaderType(string $string):Template
+    public function contentType():string
     {
-        $this->headerType = Response::HeadersType['html'];
-        return ($this);
+        return ('html');
     }
 
     public function setData(string $data):self
@@ -116,6 +115,6 @@ abstract class HtmlTemplate extends Template
 
     public function generateBaseUrlStyle():string
     {
-        return ($this->config->getConfig('site/baseUrl') . $this->config->getConfig('Router/stylesPrefix'));
+        return ($this->config->getConfig('site/baseUrl') . $this->config->getConfig('Router/stylesPrefix') . "/");
     }
 }

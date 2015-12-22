@@ -8,6 +8,9 @@ use framework\Config\models\Config;
 use framework\Exceptions\models\Exception;
 use framework\Router\models\Router;
 use framework\Router\models\RouterElement;
+use framework\Template\models\CssTemplate;
+use framework\Template\models\JsonTemplate;
+use framework\Template\models\JsTemplate;
 
 class Request extends Http
 {
@@ -72,6 +75,15 @@ class Request extends Http
     {
         if ($this->router->getMatch() == false)
             throw new Exception("404 page not found");
+        if ($this->router->isCss or $this->router->isJs())
+        {
+            $this->response = new Response();
+            if ($this->router->isCss())
+                $this->response->setTemp((new CssTemplate($this->router->getCss())));
+            else
+                $this->response->setTemp((new JsTemplate($this->router->getJs())));
+            return ($this);
+        }
         $_ctrl = explode(':', $this->router->getMatchRoute()->getController());
         if (count($_ctrl) == 2)
             $ctrl = 'src\\' . $_ctrl[0] . '\\Controller\\' . $_ctrl[1] . 'Controller';

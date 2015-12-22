@@ -6,10 +6,5 @@ namespace framework\Template\models;
 
 abstract class Template implements TemplateInterface
 {
-    protected $headerType;
 
-    public function getHeaderType():string
-    {
-        return $this->headerType;
-    }
 }
