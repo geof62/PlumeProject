@@ -29,6 +29,7 @@ class Response
     public function header():self
     {
         header('Content-type: ' . self::HeadersType[$this->contentType]);
+        return ($this);
     }
 
     public function setTemp(Template $tmp):self
