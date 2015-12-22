@@ -11,11 +11,35 @@ body
     min-height: 100%;
     width: auto;
     max-width: 100%;
-    background-color: #111111;
+    background-color: white;
+}
+
+#loading
+{
+    margin:  0;
+    padding:  0;
+    background-color: rgba(0, 0, 0, 0.7);
+    position:  absolute;
+    top:  0;
+    left:  0;
+    right:  0;
+    bottom: 0;
+}
+
+.sk-phrase
+{
+    position:  relative;
+    margin:  0;
+    margin-top:  100px;
+    padding: 0;
+    width: auto;
+    text-align: center;
+    color:  white;
+    text-shadow: 2px 2px #333333;
 }
 
 .sk-circle {
-    margin: 100px auto;
+    margin: 20px auto;
     width: 40px;
     height: 40px;
     position: relative;
@@ -33,7 +57,8 @@ body
     margin: 0 auto;
     width: 15%;
     height: 15%;
-    background-color: #333;
+    background-color:  white;
+    border: 1px solid black;
     border-radius: 100%;
     -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
     animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
