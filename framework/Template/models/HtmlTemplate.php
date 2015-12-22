@@ -74,14 +74,14 @@ abstract class HtmlTemplate extends Template
 
     protected function prepareHead():string
     {
-        $header = "<!DOCTYPE html>"
-            . "<html>"
-            . "<head>"
-            . "<meta charset=\"$this->charset\">"
-            . "<title>$this->title</title>"
+        $header = "<!DOCTYPE html>\n"
+            . "<html>\n"
+            . "<head>\n"
+            . "<meta charset=\"$this->charset\">\n"
+            . "<title>$this->title</title>\n"
             . $this->prepareStyles()
-            . "</head>"
-            . "<body>";
+            . "</head>\n"
+            . "<body>\n";
         return ($header);
     }
 
@@ -90,7 +90,7 @@ abstract class HtmlTemplate extends Template
         $result = "";
         foreach ($this->scripts as $v)
         {
-            $result .= "<script src=\"$v\"></script>";
+            $result .= "<script src=\"$v\"></script>\n";
         }
         return ($result);
     }
@@ -98,8 +98,8 @@ abstract class HtmlTemplate extends Template
     protected function prepareEnd():string
     {
         $footer = $this->prepareScripts()
-            . "</body>"
-            . "</html>";
+            . "</body>\n"
+            . "</html>\n";
         return ($footer);
     }
 
