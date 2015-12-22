@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace framework\Template\models;
 
+use framework\Config\models\Config;
 use framework\Exceptions\models\Exception;
 use framework\Http\models\Response;
 
@@ -15,9 +16,11 @@ abstract class HtmlTemplate extends Template
     protected $charset = "UTF-8";
     protected $title = "Page";
     protected $data = "";
+    protected $config;
 
-    protected function __construct()
+    protected function __construct(Config $config)
     {
+        $this->config = $config;
     }
 
     public function setHeaderType(string $string):Template
@@ -109,5 +112,10 @@ abstract class HtmlTemplate extends Template
         $result .= $this->prepareData();
         $result .= $this->prepareEnd();
         return ($result);
+    }
+
+    public function generateBaseUrlStyle():string
+    {
+        return ($this->config->getConfig('site/baseUrl') . $this->config->getConfig('Router/stylesPrefix'));
     }
 }
