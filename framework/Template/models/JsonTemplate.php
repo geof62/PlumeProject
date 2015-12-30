@@ -8,10 +8,9 @@ class JsonTemplate extends Template
 {
     protected $data = [];
 
-    public function setHeaderType(string $string):Template
+    public function contentType():string
     {
-        $this->headerType = Response::HeadersType['json'];
-        return ($this);
+        return ('json');
     }
 
     protected function addNode(string $key, $value)
@@ -22,7 +21,6 @@ class JsonTemplate extends Template
 
     public function render():string
     {
-        header('Content-type: ' . $this->headerType);
         $result = json_encode($this->data);
         return ($result);
     }
