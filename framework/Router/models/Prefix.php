@@ -4,53 +4,50 @@ declare(strict_types=1);
 
 namespace framework\Router\models;
 
-use framework\Exceptions\models\Exception;
+use framework\Exception\models\Exception;
 
-class Prefix extends RouterElement
+class Prefix extends RouteElement
 {
-    protected $route;
-    protected $collection;
+    protected $prefix;
+    protected $data;
 
-    public function __construct(string $route, callable $collection)
+    public function __construct(string $prefix, RouteCollection $collection)
     {
-        $this->setRoute($route)
-            ->setCollection($collection);
+        $this->setPrefix($prefix)
+            ->setData($collection);
     }
 
-    public function setRoute(string $route):self
+    public function setPrefix(string $prefix):self
     {
-        $route = self::cleanRoute($route);
-        if (!preg_match("#^[a-zA-Z/]*$#", $route))
-            throw new Exception("invalid routePrefix name");
-        $this->route = $route;
+        if (!preg_match("#^[a-zA-Z-]*$#", $prefix))
+            throw new Exception("Invalid prefix name");
+        $this->prefix = $prefix;
         return ($this);
     }
 
-    public function setCollection(callable $collection):self
+    public function setData(RouteCollection $collection):self
     {
-        $collection = $collection();
-        if (!($collection instanceof RouteCollection))
-            throw new Exception("Invalid RouteCollection");
-        $this->collection = $collection;
+        $this->data = $collection;
         return ($this);
     }
 
-    public function getRoute():string
+    public function search(string $url):self
     {
-        return ($this->route);
+        $url = trim($url, "/");
+        if (!substr($url, 0, strlen($this->prefix)) === $this->prefix)
+            return ($this);
+        $url = substr($url, strlen($this->prefix));
+        $this->data->search($url);
+        return ($this);
     }
 
-    public function getCollection():RouteCollection
+    public function isFind():bool
     {
-        return ($this->collection);
+        return ($this->data->isFind());
     }
 
-    public function search(string $url, string $prefix, int $method)
+    public function getFind():FindRoute
     {
-        if (strlen($prefix) == 0)
-            $prefix = $this->route;
-        else
-            $prefix = $prefix . "/" . $this->route;
-        return ($this->collection->search($url, $prefix, $method));
+        return ($this->data->getFind());
     }
 }

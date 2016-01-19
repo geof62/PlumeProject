@@ -4,106 +4,98 @@ declare(strict_types=1);
 
 namespace framework\Http\models;
 
-use framework\Config\models\Config;
-use framework\Exceptions\models\Exception;
-use framework\Router\models\Router;
-use framework\Router\models\RouterElement;
-use framework\Template\models\CssTemplate;
-use framework\Template\models\JsonTemplate;
-use framework\Template\models\JsTemplate;
+use framework\Exception\models\Exception;
 
-class Request extends Http
+class Request
 {
-    protected $method = 1;
-    protected $uri = "";
-    protected $router;
-    protected $response;
-    protected $config;
+    const HTTP_METHODS = [
+        'GET',
+        'POST',
+        'PUT',
+        'DEL'
+    ];
+    protected $server;
+    protected $method;
+    protected $uri;
+    protected $beginClientRequest;
+    protected $tls = false;
+    protected $clientIp;
 
-    /*
-     * $_SERVER is specify to permiss to load an other configuration
-     */
-    public function __construct(array $server, Config $config)
+    public function __construct(array $server)
     {
-        $this->config = $config;
-        $this->hydrate($server)
-            ->loadRouter($config)
-            ->loadResponse()
-            ->put();
+        $this->setServer($server)
+            ->hydrate();
     }
 
-    public function hydrate(array $server):self
+    public function hydrate():self
     {
-        $this->setUri($server)
-            ->setMethod($server);
+        if (!in_array("REQUEST_METHOD", $this->server))
+            throw new Exception("No Method precise");
+        $this->setMethod($this->server["REQUEST_METHOD"]);
+
+        if (!in_array("REQUEST_URI", $this->server))
+            throw new Exception("No Uri precise");
+        $this->setUri($this->server["REQUEST_URI"]);
+
+        if (!in_array("REQUEST_TIME_FLOAT", $this->server))
+            throw new Exception("No begin request time precise");
+        $this->setBeginClientRequest($this->server["REQUEST_TIME_FLOAT"]);
+
+        if (in_array("HTTPS", $this->server) && $this->server == 1)
+            $this->activeHttps();
+
+        if (!in_array("REMOTE_ADDR", $this->server))
+            throw new Exception("No client ip precise");
+        $this->setClientIp($this->server["REMOTE_ADDR"]);
         return ($this);
     }
 
-    public function setUri(array $server):self
+    public function setServer(array $server):self
     {
-        if (!array_key_exists('REQUEST_URI', $server))
-            throw new Exception("URI isn't precise");
-        $this->uri = RouterElement::cleanRoute($server['REQUEST_URI']);
+        $this->server = $server;
         return ($this);
     }
 
-    public function setMethod(array $server):self
+    public function setMethod(string $method):self
     {
-        if (array_key_exists('REQUEST_METHOD', $server))
-            $this->method = Http::getMethod($server['REQUEST_METHOD']);
+        if (!in_array($method, self::HTTP_METHODS))
+            throw new Exception("Invalid Request Method");
+        $this->method = $method;
         return ($this);
     }
 
-    public function getMethodR():int
+    public function setUri(string $uri):self
     {
-        return ($this->method);
-    }
-
-    public function getUri():string
-    {
-        return $this->uri;
-    }
-
-    protected function loadRouter(Config $config):self
-    {
-        $this->router = new Router($this, $config);
-        $this->router->searchRoute($config);
+        $this->uri = $uri;
         return ($this);
     }
 
-    protected function loadResponse():self
+    public function setBeginClientRequest(float $time):self
     {
-        if ($this->router->isCss()) {
-            $this->response = new Response('css');
-            $this->response->setTemp((new CssTemplate($this->router->getCss())));
-            return ($this);
-        }
-        else if ($this->router->isJs())
-        {
-            $this->response = new Response('js');
-            $this->response->setTemp((new JsTemplate($this->router->getJs())));
-            return ($this);
-        }
-        if ($this->router->getMatch() == false)
-            throw new Exception("404 page not found");
-        $_ctrl = explode(':', $this->router->getMatchRoute()->getController());
-        if (count($_ctrl) == 2)
-            $ctrl = 'src\\' . $_ctrl[0] . '\\Controller\\' . $_ctrl[1] . 'Controller';
-        else
-            $ctrl = 'src\\General\\Controller\\' . $_ctrl[0] . 'Controller';
-        if (!class_exists($ctrl))
-            throw new Exception("invalid controller for this url");
-        if (!method_exists($ctrl, $this->router->getMatchRoute()->getAction()))
-            throw new Exception("invalid action for this url");
-        $ctrl = new $ctrl($this->config);
-        $act = $this->router->getMatchRoute()->getAction();
-        $this->response = $ctrl->$act();
+        $this->beginClientRequest = $time;
         return ($this);
     }
 
-    protected function put():self
+    public function activeHttps():self
     {
-        $this->response->put();
+        $this->tls = true;
+    }
+
+    public function setClientIp(string $ip):self
+    {
+        $this->clientIp = $ip;
         return ($this);
+    }
+
+    public function getServer():array
+    {
+        return ($this->server);
+    }
+
+    public function getServerKey(string $key)
+    {
+        if (!array_key_exists($key, $this->server))
+            return (NULL);
+        return ($this->server[$key]);
     }
 }

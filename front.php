@@ -10,7 +10,7 @@ if (empty($_GET) || !array_key_exists('url', $_GET))
 }
 
 define('RACINE', getcwd());
-define('DIR_DELIMITER', '\\');
+define('DIR_DELIMITER', '/');
 
 function incAbs(string $path)
 {
@@ -22,5 +22,5 @@ include_once("autoload.php");
 $autoload = new SplClassLoader();
 $autoload->register();
 
-$config = new \framework\Config\models\Config("app/config/config.php");
-$request = new \framework\Http\models\Request($_SERVER, $config);
+$config = new \framework\Config\models\Config();
+$route = new \framework\Router\models\Router(incAbs("app/router/routes.php"), $config);

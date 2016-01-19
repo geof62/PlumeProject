@@ -4,43 +4,48 @@ declare(strict_types=1);
 
 namespace framework\Utilities;
 
-use framework\Exceptions\models\Exception;
-
 abstract class Collection
 {
     protected $data = [];
 
-    protected function addNode($value, $key=NULL, bool $overwrite=true):self
+    public function __construct(array $data = [])
+    {
+        $this->addData($data);
+    }
+
+    public function addData(array $data, bool $key = false):self
+    {
+        foreach($data as $k => $v)
+        {
+            if ($key == true)
+                $this->addNode($v, $k);
+            else
+                $this->addNode($v);
+        }
+        return ($this);
+    }
+
+    public function addNode($value, string $key = NULL, bool $replace = true):self
     {
         if ($key == NULL)
             $this->data[] = $value;
-        else if (in_array($key, $this->data))
-        {
-            if ($overwrite == true)
-                $this->data[$key] = $value;
-        }
-        else
+        else if (in_array($key, $this->data) && $replace == true)
+            $this->data[$key] = $value;
+        else if (!in_array($key, $this->data))
             $this->data[$key] = $value;
         return ($this);
     }
 
-    public function getNode($key, bool $exception=false)
+    public function delNode(string $key):self
     {
         if (in_array($key, $this->data))
-            return ($this->data[$key]);
-        if ($exception == true)
-            throw new Exception("Node width key : " . $key . " doesn't exist.");
-        else
-            return (NULL);
+            unset($this->data[$key]);
+        return ($this);
     }
 
-    public function getAll():array
+    public function clear():self
     {
-        return ($this->data);
-    }
-
-    public function length():int
-    {
-        return (count($this->data));
+        $this->data = [];
+        return ($this);
     }
 }

@@ -4,45 +4,34 @@ declare(strict_types=1);
 
 namespace framework\Router\models;
 
-use framework\Exceptions\models\Exception;
-use framework\Http\models\Http;
+use framework\Exception\models\Exception;
 
-class Route extends RouterElement
+class Route extends RouteElement
 {
     protected $route = "";
     protected $params = [];
-    protected $methods = [];
-    protected $action = [];
     protected $regex = "";
+    protected $actions = [
+        'controller' => NULL,
+        'GET' => NULL,
+        'POST' => NULL,
+        'PUT' => NULL,
+        'DEL' => NULL
+    ];
     protected $orderParams = [];
+    protected $find = false;
+    protected $findR;
 
-    public function __construct(string $route, $params, $action, $methods = [])
+    public function __construct(string $route, array $params = [])
     {
-        if (count($methods) == 0)
-            $methods = ['ALL'];
         $this->setRoute($route)
-            ->setParams($params)
-            ->setAction($action)
-            ->setMethods($methods);
+            ->setParams($params);
     }
 
     public function setRoute(string $route):self
     {
-        $route = self::cleanRoute($route);
-        if (!preg_match("#^((([a-zA-Z0-9-.\\/]+)|({[a-zA-Z]+}))+)$#", $route))
-            throw new Exception("Invalid route");
-        preg_match("#{[a-zA-Z]*}#", $route, $matches);
-        foreach ($matches as $v)
-        {
-            $first = 0;
-            foreach ($matches as $v2)
-            {
-                if ($v == $v2)
-                    $first++;
-                if ($first == 2)
-                    throw new Exception("Paramters'names must be unique");
-            }
-        }
+        if (!preg_match("#^([a-zA-Z0-9-/]*|(\\{[a-z]*\\}))*$#", $route))
+            throw new Exception("invalid route");
         $this->route = $route;
         return ($this);
     }
@@ -51,74 +40,138 @@ class Route extends RouterElement
     {
         foreach ($params as $k => $v)
         {
-            if (!preg_match("#[a-zA-Z]+#", $k) || preg_match("#$v#", "") === false)
-                throw new Exception("Invalid paramter : " . $k);
+            $this->setParam($k, $v);
         }
-        $this->validParams($params);
-        $this->params = $params;
+        $this->verifParams();
         return ($this);
     }
 
-    public function validParams(array $params):self
+    protected function setParam(string $name, string $regex):self
     {
-        preg_match("#{[a-zA-Z]+}#", $this->route, $mat);
-        foreach ($mat as $v)
-        {
-            if (!array_key_exists(trim($v, '{}'), $params))
-                throw new Exception("Parameter inexistant " . trim($v, '{}'));
-        }
+        if (!preg_match("#^[a-z]*$#", $name))
+            throw new Exception("Invalid parameter name : " . $name);
+        // à cmp vérif de regex
+        $this->params[$name] = $regex;
         return ($this);
     }
 
-    public function setAction(array $action):self
+    public function verifParams():self
     {
-        foreach ($action as $k => $v)
+        preg_match("#\\{([a-z]*)\\}#", $this->route, $matches);
+        foreach ($matches as $k => $v)
         {
-            if ($k != 'ctrl' && $k != 'action')
-                throw new Exception("Invalid actions : you must specify a controller and an action");
-            if (!preg_match("#[a-zA-Z]*#", $v))
-                throw new Exception("Invalid " . $k . " value : " . $v);
-        }
-        $this->action = $action;
-        return ($this);
-    }
-
-    public function setMethods(array $methods):self
-    {
-        foreach ($methods as $k => $v)
-        {
-            if (!Http::isMethod($v))
+            if ($k != 0)
             {
-                throw new Exception("invalid Method : " . $v);
+                if (!array_key_exists($v, $this->params))
+                    throw new Exception("Regex for param " . $v . " is not precise.");
             }
-            $methods[$k] = Http::getMethod($v);
         }
-        $this->methods = $methods;
         return ($this);
     }
 
-    public function prepareRegex():self
+    public function setController(string $controller):self
+    {
+        if (!preg_match("#^[a-zA-Z]*$#", $controller))
+            throw new Exception("Invalid controller.");
+        $this->actions['controller'] = $controller;
+        return ($this);
+    }
+
+    public function setGet(string $action):self
+    {
+        if (!preg_match("#^[a-zA-Z]*$#", $action))
+            throw new Exception("Invalid get action");
+        $this->actions['GET'] = $action;
+        return ($this);
+    }
+
+    public function setPost(string $action):self
+    {
+        if (!preg_match("#^[a-zA-Z]*$#", $action))
+            throw new Exception("Invalid post action");
+        $this->actions['POST'] = $action;
+        return ($this);
+    }
+
+    public function setPut(string $action):self
+    {
+        if (!preg_match("#^[a-zA-Z]*$#", $action))
+            throw new Exception("Invalid put action");
+        $this->actions['PUT'] = $action;
+        return ($this);
+    }
+
+    public function setDel(string $action):self
+    {
+        if (!preg_match("#^[a-zA-Z]*$#", $action))
+            throw new Exception("Invalid del action");
+        $this->actions['DEL'] = $action;
+        return ($this);
+    }
+
+    public function setActions(array $actions):self
+    {
+        foreach($actions as $k => $v)
+        {
+            if ($k == "controller")
+                $this->setController($v);
+            else if ($k == "get")
+                $this->setGet($v);
+            else if ($v == "post")
+                $this->setPost($v);
+            else if ($v == "put")
+                $this->setPut($v);
+            else if ($v == "del")
+                $this->setDel($v);
+        }
+        return ($this);
+    }
+
+    public function getController():string
+    {
+        return ($this->actions['controller']);
+    }
+
+    public function isValidMethod(string $method):bool
+    {
+        $method = strtoupper($method);
+        if (array_key_exists($method, $this->actions) && $method != "CONTROLLER" && $this->actions[$method] !== NULL)
+            return (true);
+        return (false);
+    }
+
+    public function getActionByMethod(string $method):string
+    {
+        if (strtolower($method) == "get")
+            return ($this->actions['GET']);
+        else if (strtolower($method) == "post")
+            return ($this->actions['POST']);
+        else if (strtolower($method) == "put")
+            return ($this->actions['PUT']);
+        else if (strtolower($method) == "del")
+            return ($this->actions['DEL']);
+        else
+            throw new Exception("Invalid method : " . $method);
+    }
+
+    protected function prepareRegex():self
     {
         $params = $this->params;
         $ord = &$this->orderParams;
-        $this->regex = preg_replace_callback("#{([a-zA-Z]*)}#", function ($matches) use ($params, &$ord) {
+        $this->regex = preg_replace_callback("#{([a-z]*)}#", function ($matches) use ($params, &$ord) {
             $ord[] = $matches[1];
             return ('(' . str_replace('(', '(?:', $params[$matches[1]]) . ')');
         }, $this->route);
         return ($this);
     }
 
-    public function compare(string $url, string $prefix, int $method):MatchRoute
+    public function search(string $url):self
     {
-        $find = new MatchRoute();
-        if (!Http::allowMethod($method, $this->methods))
-            return ($find);
-        if ($prefix != "")
-            $prefix .= '\\/';
-        if (preg_match("#^" . $prefix . str_replace('/', '\\/', $this->regex) ."$#", $url))
+        $this->prepareRegex();
+        if (preg_match("#^" . $this->regex . "$#", $url))
         {
-            $find->find();
-            $find->setRoute($this);
+            $this->find = true;
+            $this->findR = new FindRoute($this);
             $ord = $this->orderParams;
             $params = [];
             preg_replace_callback("#^" . $this->regex . "$#", function ($matches) use ($ord, &$params) {
@@ -127,18 +180,20 @@ class Route extends RouterElement
                         $params[$ord[$k - 1]] = $v;
                 }
             }, $url);
-            $find->setParams($params);
+            $this->findR->addParams($params);
         }
-        return ($find);
+        return ($this);
     }
 
-    public function getController()
+    public function isFind():bool
     {
-        return ($this->action['ctrl']);
+        return ($this->find);
     }
 
-    public function getAction()
+    public function getFind():FindRoute
     {
-        return ($this->action['action']);
+        if ($this->isFind())
+            return ($this->findR);
+        return (NULL);
     }
 }
