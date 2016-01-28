@@ -18,9 +18,14 @@ function incAbs(string $path)
     return ($a);
 }
 
+function getFileContentAbs(string $path)
+{
+    $a = file_get_contents(RACINE . DIR_DELIMITER . str_replace('/', DIR_DELIMITER, $path));
+    return ($a);
+}
+
 include_once("autoload.php");
 $autoload = new SplClassLoader();
 $autoload->register();
 
-$config = new \framework\Config\models\Config();
-$route = new \framework\Router\models\Router(incAbs("app/router/routes.php"), $config);
+$app = new \framework\Application\Application('app/');

@@ -71,7 +71,7 @@ class Route extends RouteElement
 
     public function setController(string $controller):self
     {
-        if (!preg_match("#^[a-zA-Z]*$#", $controller))
+        if (!preg_match("#^[a-zA-Z\\\\]*$#", $controller))
             throw new Exception("Invalid controller.");
         $this->actions['controller'] = $controller;
         return ($this);

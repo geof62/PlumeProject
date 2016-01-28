@@ -44,6 +44,13 @@ class RouteCollection extends Collection
         return ($this);
     }
 
+    public function setFind(FindRoute $find):self
+    {
+        $this->find = true;
+        $this->findR = $find;
+        return ($this);
+    }
+
     public function isFind():bool
     {
         return ($this->find);

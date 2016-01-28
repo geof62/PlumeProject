@@ -1,0 +1,5 @@
+<ifModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ front.php?url=$1 [QSA,L]
+</ifModule>

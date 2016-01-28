@@ -29,22 +29,22 @@ class Request
 
     public function hydrate():self
     {
-        if (!in_array("REQUEST_METHOD", $this->server))
+        if (!array_key_exists("REQUEST_METHOD", $this->server))
             throw new Exception("No Method precise");
         $this->setMethod($this->server["REQUEST_METHOD"]);
 
-        if (!in_array("REQUEST_URI", $this->server))
+        if (!array_key_exists("url", $_GET))
             throw new Exception("No Uri precise");
-        $this->setUri($this->server["REQUEST_URI"]);
+        $this->setUri($_GET['url']);
 
-        if (!in_array("REQUEST_TIME_FLOAT", $this->server))
+        if (!array_key_exists("REQUEST_TIME_FLOAT", $this->server))
             throw new Exception("No begin request time precise");
         $this->setBeginClientRequest($this->server["REQUEST_TIME_FLOAT"]);
 
-        if (in_array("HTTPS", $this->server) && $this->server == 1)
+        if (array_key_exists("HTTPS", $this->server) && $this->server == 1)
             $this->activeHttps();
 
-        if (!in_array("REMOTE_ADDR", $this->server))
+        if (!array_key_exists("REMOTE_ADDR", $this->server))
             throw new Exception("No client ip precise");
         $this->setClientIp($this->server["REMOTE_ADDR"]);
         return ($this);
@@ -97,5 +97,15 @@ class Request
         if (!array_key_exists($key, $this->server))
             return (NULL);
         return ($this->server[$key]);
+    }
+
+    public function getUri():string
+    {
+        return ($this->uri);
+    }
+
+    public function getMethod():string
+    {
+        return ($this->method);
     }
 }

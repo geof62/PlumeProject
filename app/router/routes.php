@@ -9,10 +9,10 @@ use framework\Router\models\RouteCollection;
 
 $routes = function(){
     $r = new RouteCollection([
-        (new Route("index"))->setController("Default")
+        (new Route("index"))->setController("src\\Page\\Controller\\Default")
                             ->setGet("index"),
         (new Route("index/id-{id}", ['id' => "[0-9]"]))
-                            ->setController("Default")
+                            ->setController("src\\Page\\Controller\\Default")
                             ->setGet("salut")
     ]);
     return ($r);
