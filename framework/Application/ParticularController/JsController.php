@@ -6,6 +6,12 @@ namespace framework\Application\ParticularController;
 
 use framework\Application\Controller;
 
+/**
+ * Class JsController.
+ * load the js files
+ *
+ * @package framework\Application\ParticularController
+ */
 class JsController extends Controller
 {
     public function defaultTemplate():string

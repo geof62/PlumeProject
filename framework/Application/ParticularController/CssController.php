@@ -7,6 +7,11 @@ namespace framework\Application\ParticularController;
 use framework\Application\Controller;
 use framework\Template\models\CssTemplate;
 
+/**
+ * Class CssController.
+ * Load css files
+ * @package framework\Application\ParticularController
+ */
 class CssController extends Controller
 {
     public function defaultTemplate():string

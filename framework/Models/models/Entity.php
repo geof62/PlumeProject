@@ -7,24 +7,67 @@ namespace framework\Models\models;
 use framework\Application\Application;
 use framework\Exception\models\Exception;
 
+/**
+ * Class Entity
+ * This class is a parent for all entities which must have a DB relations
+ *
+ * @package framework\Models\models
+ */
 abstract class Entity implements EntityInterface
 {
+    /**
+     * safeguard of the Application to can access it
+     *
+     * @var Application
+     */
     static private $app;
+
+    /**
+     * sauvegarde des parametres
+     *
+     * @var array
+     */
     private $sauv =[];
 
+    /**
+     * used to safegard an instance of Application
+     * @param Application $app
+     */
     public static function setApp(Application $app)
     {
         self::$app = $app;
     }
 
-    // fonctions static pour récup id par autre param
+    /**
+     * Get an id by a gived parameter
+     *
+     * @param string $param
+     * @return int
+     */
+    public static function getIdByParam(string $param):int
+    {
 
-    public function __construct(int $id)
+    }
+
+    /**
+     * Entity constructor.
+     *
+     * @param int $id if is not precise, create new instance
+     */
+    public function __construct(int $id = -1)
     {
         ////// chargement des données par id
         $this->saveParams();
     }
 
+    /**
+     * dynamique setter and getter
+     *
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws Exception
+     */
     public function __call($name, $arguments)
     {
         if (substr($name, 0, 3) == "set" && count($arguments) == 1)
@@ -44,6 +87,11 @@ abstract class Entity implements EntityInterface
             throw new Exception("invalid method $name for this class");
     }
 
+    /**
+     * Save in the DB changes
+     *
+     * @return Entity
+     */
     private function saveParams():self
     {
         foreach(self::ORM()['prop'] as $k => $v)
@@ -54,6 +102,12 @@ abstract class Entity implements EntityInterface
         return ($this);
     }
 
+    /**
+     * Check if the proprieties are valid
+     *
+     * @return Entity
+     * @throws Exception
+     */
     private function verifParams():self
     {
         foreach(self::ORM()['prop'] as $k => $v)
@@ -64,11 +118,19 @@ abstract class Entity implements EntityInterface
             if (array_key_exists('max', $v))
                 $this->verifMax($this->$k, $v['max']);
             if (array_key_exists('regex', $v) && ($v['type'] == "string" || $v['type'] == "password"))
-                $this->verifMax($this->$k, $v['regex']);
+                $this->verifRegex($this->$k, $v['regex']);
             // autres verifs
         }
     }
 
+    /**
+     * check if a propriety have a valid type
+     *
+     * @param string $type
+     * @param $value
+     * @return Entity
+     * @throws Exception
+     */
     private function verifTypeParam(string $type, $value):self
     {
         if ($type == "string" && !is_string($value))
@@ -82,6 +144,14 @@ abstract class Entity implements EntityInterface
             return ($this);
     }
 
+    /**
+     * check if the minimum is valid
+     *
+     * @param $value
+     * @param int $min
+     * @return Entity
+     * @throws Exception
+     */
     private function verifMin($value, int $min):self
     {
         if (is_string($value) && strlen($value) < $min)
@@ -92,6 +162,14 @@ abstract class Entity implements EntityInterface
             return ($this);
     }
 
+    /**
+     * check if the maximum is valid
+     *
+     * @param $value
+     * @param int $max
+     * @return Entity
+     * @throws Exception
+     */
     private function verifMax($value, int $max):self
     {
         if (is_string($value) && strlen($value) > $max)
@@ -102,16 +180,30 @@ abstract class Entity implements EntityInterface
             return ($this);
     }
 
+    /**
+     * check if the parameter is valid by regex
+     *
+     * @param $value
+     * @param string $regex
+     * @return Entity
+     * @throws Exception
+     */
     private function verifRegex($value, string $regex):self
     {
-
-
+        if (!preg_match("#^" . $regex . "$#", $value))
+            throw new Exception("the parameter doesn't correspond to the regex ");
         return ($this);
     }
 
+    /**
+     * save the changes of the entity
+     *
+     * @return Entity
+     */
     public function save():self
     {
         $this->verifParams();
+        //
         return ($this);
     }
 }

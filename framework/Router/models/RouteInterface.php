@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace framework\Router\models;
 
+/**
+ * Interface RouteInterface.
+ * @package framework\Router\models
+ */
 interface RouteInterface
 {
     public function search(string $url);

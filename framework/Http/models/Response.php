@@ -7,8 +7,18 @@ namespace framework\Http\models;
 use framework\Exception\models\Exception;
 use framework\Template\models\Template;
 
+/**
+ * Class Response.
+ * Manage the http response
+ *
+ * @package framework\Http\models
+ */
 class Response
 {
+    /**
+     * supported http status code
+     * @var array
+     */
     const STATUS_CODE = [
         200 => 'OK',
         201 => 'Created',
@@ -23,6 +33,10 @@ class Response
         503 => 'Maintenance'
     ];
 
+    /**
+     * supported content types
+     * @var array
+     */
     const CONTENT_TYPE = [
         'html' => 'text/html',
         'js' => 'application/javascript',
@@ -36,10 +50,29 @@ class Response
         'text' => 'text/plain',
     ];
 
+    /**
+     * the status code
+     * @var int
+     */
     protected $code;
+
+    /**
+     * template of response
+     * @var string
+     */
     protected $content;
+
+    /**
+     * the content type
+     * @var string
+     */
     protected $contentType = 'text/html';
 
+    /**
+     * Response constructor.
+     * @param Template $tmp
+     * @param int $code
+     */
     public function __construct(Template $tmp, int $code = 200)
     {
         $this->setCode($code);
@@ -47,7 +80,13 @@ class Response
         $this->setContentType($tmp->getType());
     }
 
-    public function setCode($code):self
+    /**
+     * set the code status
+     * @param int $code
+     * @return Response
+     * @throws Exception
+     */
+    public function setCode(int $code):self
     {
         if (array_key_exists($code, self::STATUS_CODE))
             $this->code = $code;
@@ -56,12 +95,22 @@ class Response
         return ($this);
     }
 
+    /**
+     * set the Template
+     * @param Template $template
+     * @return Response
+     */
     public function setTemplate(Template $template):self
     {
         $this->content = $template;
         return ($this);
     }
 
+    /**
+     * @param string $type
+     * @return Response
+     * @throws Exception
+     */
     public function setContentType(string $type):self
     {
         if (!array_key_exists($type, self::CONTENT_TYPE))
@@ -70,11 +119,18 @@ class Response
         return ($this);
     }
 
+    /**
+     * @return Template
+     */
     public function getTemplate():Template
     {
         return ($this->content);
     }
 
+    /**
+     * send the response to the client
+     * @return Response
+     */
     public function send():self
     {
         header('Content-Type: ' . $this->contentType, true, $this->code);

@@ -6,11 +6,38 @@ namespace framework\Router\models;
 
 use framework\Exception\models\Exception;
 
+/**
+ * Class Route
+ * @package framework\Router\models
+ *
+ * Represent a route
+ *
+ */
 class Route extends RouteElement
 {
+    /**
+     * Pattern of the route
+     * @var string
+     */
     protected $route = "";
+
+    /**
+     * list of parameters. form :
+     * 'name' => 'regex'
+     * @var array
+     */
     protected $params = [];
+
+    /**
+     * prepared regex
+     * @var string
+     */
     protected $regex = "";
+
+    /**
+     * list of actions by method
+     * @var array
+     */
     protected $actions = [
         'controller' => NULL,
         'GET' => NULL,
@@ -18,16 +45,47 @@ class Route extends RouteElement
         'PUT' => NULL,
         'DEL' => NULL
     ];
+
+    /**
+     * Parameters in asc order in route pattern
+     * @var array
+     */
     protected $orderParams = [];
+
+    /**
+     * True if a route is matched
+     * @var bool
+     */
     protected $find = false;
+
+    /**
+     * instance of FindRoute if aa route is matched
+     * @var FindRoute
+     */
     protected $findR;
 
+    /**
+     * @description Init the route
+     * @param string $route the pattern of the route
+     * @param array $params the list of parameters
+     */
     public function __construct(string $route, array $params = [])
     {
         $this->setRoute($route)
             ->setParams($params);
     }
 
+    /**
+     * set the pattern of the route.
+     * Form :
+     * ^([a-zA-Z0-9-/]*|(\\{[a-z]*\\}))*$
+     * parameter : {parametername}
+     * route without / at the begining and the end
+     *
+     * @param string $route
+     * @return Route
+     * @throws Exception
+     */
     public function setRoute(string $route):self
     {
         if (!preg_match("#^([a-zA-Z0-9-/]*|(\\{[a-z]*\\}))*$#", $route))
@@ -36,6 +94,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * add numerous parameters
+     * @param array $params
+     * @return Route
+     * @throws Exception
+     */
     public function setParams(array $params):self
     {
         foreach ($params as $k => $v)
@@ -46,6 +110,14 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * parameter name : just lowercaser alphacaracters
+     * regex : valid regex, without "#", "^" and "$"
+     * @param string $name
+     * @param string $regex
+     * @return Route
+     * @throws Exception
+     */
     protected function setParam(string $name, string $regex):self
     {
         if (!preg_match("#^[a-z]*$#", $name))
@@ -55,6 +127,11 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * check if all of the parameters given in the route pattern are present in the parameters array
+     * @return Route
+     * @throws Exception
+     */
     public function verifParams():self
     {
         preg_match("#\\{([a-z]*)\\}#", $this->route, $matches);
@@ -69,6 +146,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * set the Controller of the Route
+     * @param string $controller the controller name, without the end "Controller"
+     * @return Route
+     * @throws Exception
+     */
     public function setController(string $controller):self
     {
         if (!preg_match("#^[a-zA-Z\\\\]*$#", $controller))
@@ -77,6 +160,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * set the action for get method
+     * @param string $action name of the action without the end "Action"
+     * @return Route
+     * @throws Exception
+     */
     public function setGet(string $action):self
     {
         if (!preg_match("#^[a-zA-Z]*$#", $action))
@@ -85,6 +174,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * set the action for post method
+     * @param string $action name of the action without the end "Action"
+     * @return Route
+     * @throws Exception
+     */
     public function setPost(string $action):self
     {
         if (!preg_match("#^[a-zA-Z]*$#", $action))
@@ -93,6 +188,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * set the action for put method
+     * @param string $action name of the action without the end "Action"
+     * @return Route
+     * @throws Exception
+     */
     public function setPut(string $action):self
     {
         if (!preg_match("#^[a-zA-Z]*$#", $action))
@@ -101,6 +202,12 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * set the action for deleted method
+     * @param string $action name of the action without the end "Action"
+     * @return Route
+     * @throws Exception
+     */
     public function setDel(string $action):self
     {
         if (!preg_match("#^[a-zA-Z]*$#", $action))
@@ -109,6 +216,11 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * @param array $actions list of the actions, with the controller
+     * @return Route
+     * @throws Exception
+     */
     public function setActions(array $actions):self
     {
         foreach($actions as $k => $v)
@@ -127,11 +239,20 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * get the controller name
+     * @return string
+     */
     public function getController():string
     {
         return ($this->actions['controller']);
     }
 
+    /**
+     * check if the given method is defined
+     * @param string $method
+     * @return bool
+     */
     public function isValidMethod(string $method):bool
     {
         $method = strtoupper($method);
@@ -140,6 +261,12 @@ class Route extends RouteElement
         return (false);
     }
 
+    /**
+     * get the action associated with the specific method
+     * @param string $method
+     * @return string
+     * @throws Exception
+     */
     public function getActionByMethod(string $method):string
     {
         if (strtolower($method) == "get")
@@ -154,6 +281,10 @@ class Route extends RouteElement
             throw new Exception("Invalid method : " . $method);
     }
 
+    /**
+     * prepare the regex : add regex parameters parts
+     * @return Route
+     */
     protected function prepareRegex():self
     {
         $params = $this->params;
@@ -165,6 +296,11 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * compare $url and the route pattern
+     * @param string $url
+     * @return Route
+     */
     public function search(string $url):self
     {
         $this->prepareRegex();
@@ -185,11 +321,19 @@ class Route extends RouteElement
         return ($this);
     }
 
+    /**
+     * return true if the route matched
+     * @return bool
+     */
     public function isFind():bool
     {
         return ($this->find);
     }
 
+    /**
+     * return the instance of FindRoute
+     * @return FindRoute
+     */
     public function getFind():FindRoute
     {
         if ($this->isFind())

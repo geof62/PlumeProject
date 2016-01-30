@@ -14,14 +14,45 @@ use framework\Router\models\Router;
 use framework\Router\models\RouterLanguage;
 use framework\Template\models\Template;
 
+/**
+ * Class Application.
+ * Base of the framework, this class allow to lance the Application, width all of component
+ *
+ * @package framework\Application
+ */
 class Application
 {
+    /**
+     * @var Config
+     */
     protected $config;
+
+    /**
+     * @var Request
+     */
     protected $request;
+
+    /**
+     * @var Router
+     */
     protected $router;
+
+    /**
+     * @var Controller
+     */
     protected $ctrl;
+
+    /**
+     * @var Response
+     */
     protected $response;
 
+    /**
+     *  Init the application, load Config, Request and Router
+     *
+     * Application constructor.
+     * @param string $baseConfig location of the config
+     */
     public function __construct(string $baseConfig)
     {
         $this->config = new Config(incAbs($baseConfig . 'config/config.php'));
@@ -41,6 +72,11 @@ class Application
             $this->loadFrontPage();
     }
 
+    /**
+     *  Check if the url correspond to an api url
+     *
+     * @return bool
+     */
     public function filterApi():bool
     {
         $url = trim($this->request->getUri(), '/');
@@ -51,6 +87,11 @@ class Application
         return (false);
     }
 
+    /**
+     * If the url isn't an api url, return the front base
+     *
+     * @return Application
+     */
     public function loadFrontPage():self
     {
         incAbs('web/' . $this->config->get('Api/front'));
@@ -61,6 +102,12 @@ class Application
      * Le découpage en plusieurs méthodes (ci-dessous) de l'application permettra d'implémenter un Event listener
      */
 
+    /**
+     * load the controller of the Application
+     *
+     * @return Application
+     * @throws Exception
+     */
     public function start():self
     {
         $this->router->search($this->request->getUri());
@@ -83,6 +130,12 @@ class Application
         return ($this);
     }
 
+    /**
+     * Load the method of the controller, and execute the application
+     *
+     * @return Application
+     * @throws Exception
+     */
     public function exec():self
     {
         $action = $this->router->getFind()->getRoute()->getActionByMethod($this->request->getMethod());
@@ -96,38 +149,77 @@ class Application
         return ($this);
     }
 
+    /**
+     * add the Response for the Application
+     *
+     * @param Response $res
+     * @return Application
+     */
     public function setResponse(Response $res):self
     {
         $this->response = $res;
         return ($this);
     }
 
+    /**
+     * send the Response to the client
+     *
+     * @return Application
+     */
     public function sendResponse():self
     {
         $this->response->send();
         return ($this);
     }
 
+    /**
+     * get the config
+     *
+     * @return Config
+     */
     public function getConfig():Config
     {
         return ($this->config);
     }
 
+    /**
+     *  get the current Request
+     *
+     * @return Request
+     */
     public function getRequest():Request
     {
         return ($this->request);
     }
 
+    /**
+     * get the current Router
+     *
+     * @return Router
+     */
     public function getRouter():Router
     {
         return ($this->router);
     }
 
+    /**
+     * get the current Response
+     *
+     * @return Response
+     */
     public function getResponse():Response
     {
         return ($this->response);
     }
 
+    /**
+     * generate an error
+     *
+     * @param int $code
+     * @param string|NULL $msg
+     * @return Application
+     * @throws Exception     *
+     */
     public function error(int $code, string $msg = NULL):self
     {
         throw new Exception("error : " . $code . " message : " . $msg);

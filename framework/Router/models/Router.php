@@ -7,11 +7,29 @@ namespace framework\Router\models;
 use framework\Config\models\Config;
 use framework\Exception\models\Exception;
 
+/**
+ * Class Router.
+ *
+ * @package framework\Router\models
+ */
 class Router
 {
+    /**
+     * @var RouteCollection
+     */
     protected $routes;
+
+    /**
+     * @var Config
+     */
     protected $config;
 
+    /**
+     * Router constructor.
+     *
+     * @param callable $collec the return of a router's config
+     * @param Config $conf
+     */
     public function __construct(callable $collec, Config $conf)
     {
         $this->config = $conf;
@@ -21,6 +39,12 @@ class Router
         $this->routes = $coll;
     }
 
+    /**
+     * search if an url matched to any route
+     *
+     * @param string $url
+     * @return Router
+     */
     public function search(string $url)
     {
         $url = trim($url, '/');
@@ -30,16 +54,33 @@ class Router
         return ($this);
     }
 
+    /**
+     * return true if a route find
+     * @return bool
+     */
     public function isFind():bool
     {
         return ($this->routes->isFind());
     }
 
+    /**
+     * return the instance of FindRoute
+     *
+     * @return FindRoute
+     */
     public function getFind():FindRoute
     {
         return ($this->routes->getFind());
     }
 
+    /**
+     * search if the route is style or script route
+     * return true is it's
+     *
+     * @param string $url
+     * @return bool
+     * @throws Exception
+     */
     public function filter(string $url):bool
     {
         if (substr($url, 0, strlen($this->config->get('Router/stylesPrefix'))) == $this->config->get('Router/stylesPrefix'))
@@ -61,6 +102,14 @@ class Router
         return (false);
     }
 
+    /**
+     * return an url generate from the Router
+     *
+     * @param string $name
+     * @param bool $abs
+     * @param string $lang
+     * @return string
+     */
     public function generate(string $name, bool $abs = true, string $lang = ""):string
     {
         // implémenter les noms dans les url

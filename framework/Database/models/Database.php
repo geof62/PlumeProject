@@ -7,10 +7,23 @@ namespace framework\Database\models;
 use framework\Config\models\Config;
 use framework\Exception\models\Exception;
 
+/**
+ * Class Database.
+ * when this abstract class is extended, autoconnect the database by config
+ * @package framework\Database\models
+ */
 abstract class Database extends \PDO implements DatabaseInterface
 {
+    /**
+     * the safeguard of the config
+     * @var Config
+     */
     protected $config;
 
+    /**
+     * Database constructor.
+     * @param Config $config
+     */
     final public function __construct(Config $config)
     {
         $this->config = $config;
