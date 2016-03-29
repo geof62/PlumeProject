@@ -24,6 +24,7 @@ class Request
         'PUT',
         'DEL'
     ];
+
     /**
      * safeguard of the $_SERVER
      * @var array
@@ -61,6 +62,12 @@ class Request
     protected $clientIp;
 
     /**
+     * safegard of data get or post
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * Request constructor.
      * Create a new Request
      *
@@ -83,6 +90,8 @@ class Request
             throw new Exception("No Method precise");
         $this->setMethod($this->server["REQUEST_METHOD"]);
 
+        $this->setData();
+
         if (!array_key_exists("url", $_GET))
             throw new Exception("No Uri precise");
         $this->setUri($_GET['url']);
@@ -97,6 +106,21 @@ class Request
         if (!array_key_exists("REMOTE_ADDR", $this->server))
             throw new Exception("No client ip precise");
         $this->setClientIp($this->server["REMOTE_ADDR"]);
+        return ($this);
+    }
+
+    /**
+     * set the data of request by method : get, post, put, del
+     * @return Request
+     */
+    public function setData():self
+    {
+        if ($this->method == "GET")
+            $this->data = $_GET;
+        else if ($this->method == "POST")
+            $this->data = $_POST;
+        else if ($this->method == "PUT" || $this->method == "DEL")
+            parse_str(file_get_contents("php://input"), $this->data);
         return ($this);
     }
 
@@ -119,7 +143,7 @@ class Request
     {
         if (!in_array($method, self::HTTP_METHODS))
             throw new Exception("Invalid Request Method");
-        $this->method = $method;
+        $this->method = strtoupper($method);
         return ($this);
     }
 
@@ -200,5 +224,24 @@ class Request
     public function getMethod():string
     {
         return ($this->method);
+    }
+
+    /**
+     *
+     * if $key == NULL (or not precise), send all of data in an array
+     *
+     * if $key doesn't exist, return NULL
+     *
+     * @param string|NULL $key
+     * @return string
+     */
+    public function getData(string $key = NULL):string
+    {
+        if ($key == NULL)
+            return $this->data;
+        else if (!array_key_exists($key, $this->data))
+            return (NULL);
+        else
+            return ($this->data[$key]);
     }
 }

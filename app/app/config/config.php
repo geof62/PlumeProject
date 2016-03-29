@@ -4,13 +4,15 @@ return (function ()
 {
     $config = [
         'site' => [
+            'baseConfig' => 'app/app',
             'baseUrl' => 'http://geof2.azurewebsites.net/',
         ],
         'Api' => [
-            'prefix' => 'api',
-            'front' => 'pages/front.html'
+            'prefixUrl' => 'api',
+            'front' => 'web/pages/front.html'
         ],
         'Router' => [
+            'baseRouter' => 'router/router.php',
             'stylesPrefix' => 'css',
             'cssController' => 'framework\\Application\\ParticularController\\Css',
             'scriptsPrefix' => 'js',
@@ -18,16 +20,17 @@ return (function ()
         ],
         'Translation' => [
             'enable' => true,
-            'file' => 'translation/translation.php'
+            'baseTranslation' => 'translation/translation.php'
         ],
         'Database' => [
             'enable' => true,
+            'type' => "mysql",
             'host' => 'localhost',
             'user' => 'root',
             'password' => 'root',
             'database' => 'yo'
         ],
-        '#modName' => 'file.php' // charge la configuration d'un module;
+        '#exampleModule' => 'exampleModule/config/config.php' // charge la configuration d'un module;
     ];
 
     return ($config);

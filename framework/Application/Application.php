@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace framework\Application;
 
 use framework\Config\models\Config;
+use framework\Database\models\Database;
+use framework\Database\models\ManangeDatabaseConnections;
 use framework\Exception\models\Exception;
 use framework\Http\models\Request;
 use framework\Http\models\Response;
@@ -12,11 +14,10 @@ use framework\Models\models\BaseEntity;
 use framework\Models\models\Entity;
 use framework\Router\models\Router;
 use framework\Router\models\RouterLanguage;
-use framework\Template\models\Template;
 
 /**
  * Class Application.
- * Base of the framework, this class allow to lance the Application, width all of component
+ * Base of the framework, this class allow to start the Application, width all of components
  *
  * @package framework\Application
  */
@@ -48,22 +49,28 @@ class Application
     protected $response;
 
     /**
-     *  Init the application, load Config, Request and Router
+     * @var Database
+     */
+    protected $database;
+
+    /**
+     * Init the application, load Config, Request and Router
      *
      * Application constructor.
-     * @param string $baseConfig location of the config
+     * @param callable $config
      */
-    public function __construct(string $baseConfig)
+    public function __construct(callable $config)
     {
-        $this->config = new Config(incAbs($baseConfig . 'config/config.php'));
+        $this->config = new Config($config);
         $this->request = new Request($_SERVER);
         if ($this->filterApi())
         {
             $this->request->setUri(substr($this->request->getUri(), strlen($this->config->get('Api/prefix'))));
             if ($this->config->get('Translation/enable') === true)
-                $this->router = new RouterLanguage(incAbs($baseConfig . 'router/routes.php'), incAbs($baseConfig . $this->config->get('Translation/file')), $this->config);
+                $this->router = new RouterLanguage(incAbs($this->config->get('baseConfig') . '/' . $this->config->get('Router/baseRouter')),
+                    incAbs($this->config->get('baseConfig') . '/' . $this->config->get('Translation/baseTranslation')), $this->config);
             else
-                $this->router = new Router(incAbs($baseConfig . 'router/routes.php'), $this->config);
+                $this->router = new Router(incAbs($this->config->get('baseConfig') . $this->config->get('Router/baseRouter')), $this->config);
             $this->start()
                 ->exec()
                 ->sendResponse();
@@ -82,7 +89,7 @@ class Application
         $url = trim($this->request->getUri(), '/');
         if ($url == "")
             return (false);
-        if (substr($url, 0, strlen($this->config->get('Api/prefix'))) === $this->config->get('Api/prefix'))
+        if (substr($url, 0, strlen($this->config->get('Api/prefix'))) === $this->config->get('Api/prefixUrl'))
             return (true);
         return (false);
     }
@@ -94,7 +101,7 @@ class Application
      */
     public function loadFrontPage():self
     {
-        incAbs('web/' . $this->config->get('Api/front'));
+        incAbs($this->config->get('Api/front'));
         return ($this);
     }
 
@@ -122,6 +129,7 @@ class Application
                 $this->ctrl = new $ctrl($this);
                 if (!($this->ctrl instanceof Controller))
                     $this->error(500, "Invalid Controller : it must extend Controller()");
+                $this->database = ManangeDatabaseConnections::connect($this->config);
                 Entity::setApp($this);
             }
         }
@@ -210,6 +218,11 @@ class Application
     public function getResponse():Response
     {
         return ($this->response);
+    }
+
+    public function getDB():Database
+    {
+        return ($this->database);
     }
 
     /**

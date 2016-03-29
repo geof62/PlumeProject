@@ -29,7 +29,7 @@ class UserExample extends Entity
                     'min' => 10,
                     'regex' => "[a-zA-Z]*"
                 ],
-                'friends' => [
+                       'friends' => [
                     'type' => 'ManyToOne',
                     'entity' => 'User'
                 ]

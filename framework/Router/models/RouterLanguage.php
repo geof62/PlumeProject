@@ -51,6 +51,7 @@ class RouterLanguage extends Router
     public function __construct(callable $routeCollection, callable $languagesCollection, Config $config)
     {
         parent::__construct($routeCollection, $config);
+        $this->langAvailable = $languagesCollection();
     }
 
     /**

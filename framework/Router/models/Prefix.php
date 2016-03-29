@@ -106,4 +106,16 @@ class Prefix extends RouteElement
     {
         return ($this->data->getFind());
     }
+
+    /**
+     * search if it contain a route $name and return url by given parameters
+     * @param string $name
+     * @param array $params
+     * @return string
+     */
+    public function generate(string $name, array $params):string
+    {
+        if (($url = $this->data->generate($name, $params)) !== NULL)
+            return ($this->prefix . '/' . $url);
+    }
 }

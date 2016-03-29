@@ -23,11 +23,11 @@ abstract class Entity implements EntityInterface
     static private $app;
 
     /**
-     * sauvegarde des parametres
+     * sauvegarde d'une instance DBRelation
      *
-     * @var array
+     * @var dbrelation
      */
-    private $sauv =[];
+    private $dbrelation;
 
     /**
      * used to safegard an instance of Application
@@ -36,6 +36,14 @@ abstract class Entity implements EntityInterface
     public static function setApp(Application $app)
     {
         self::$app = $app;
+    }
+
+    /**
+     * @return Application
+     */
+    public static function getApp():Application
+    {
+        return (self::$app);
     }
 
     /**
@@ -51,13 +59,13 @@ abstract class Entity implements EntityInterface
 
     /**
      * Entity constructor.
+     * If id is precise, hydrate the object.
      *
      * @param int $id if is not precise, create new instance
      */
     public function __construct(int $id = -1)
     {
-        ////// chargement des données par id
-        $this->saveParams();
+        $this->dbrelation = new EntityDbRelation($this, $id);
     }
 
     /**
@@ -88,37 +96,22 @@ abstract class Entity implements EntityInterface
     }
 
     /**
-     * Save in the DB changes
-     *
-     * @return Entity
-     */
-    private function saveParams():self
-    {
-        foreach(self::ORM()['prop'] as $k => $v)
-        {
-            if (!empty($this->$k))
-                $this->sauv[$k] = $this->$k;
-        }
-        return ($this);
-    }
-
-    /**
      * Check if the proprieties are valid
      *
      * @return Entity
      * @throws Exception
      */
-    private function verifParams():self
+    private function checkParams():self
     {
         foreach(self::ORM()['prop'] as $k => $v)
         {
-            $this->verifTypeParam($v['type'], $this->$k);
+            $this->checkTypeParam($v['type'], $this->$k);
             if (array_key_exists('min', $v))
-                $this->verifMin($this->$k, $v['min']);
+                $this->checkMin($this->$k, $v['min']);
             if (array_key_exists('max', $v))
-                $this->verifMax($this->$k, $v['max']);
+                $this->checkMax($this->$k, $v['max']);
             if (array_key_exists('regex', $v) && ($v['type'] == "string" || $v['type'] == "password"))
-                $this->verifRegex($this->$k, $v['regex']);
+                $this->checkRegex($this->$k, $v['regex']);
             // autres verifs
         }
     }
@@ -131,7 +124,7 @@ abstract class Entity implements EntityInterface
      * @return Entity
      * @throws Exception
      */
-    private function verifTypeParam(string $type, $value):self
+    private function checkTypeParam(string $type, $value):self
     {
         if ($type == "string" && !is_string($value))
             throw new Exception("invalid type : " . $type . " for the propriety " . $value);
@@ -152,7 +145,7 @@ abstract class Entity implements EntityInterface
      * @return Entity
      * @throws Exception
      */
-    private function verifMin($value, int $min):self
+    private function checkMin($value, int $min):self
     {
         if (is_string($value) && strlen($value) < $min)
             throw new Exception("minimum lenght for the paramter : " . $min);
@@ -170,7 +163,7 @@ abstract class Entity implements EntityInterface
      * @return Entity
      * @throws Exception
      */
-    private function verifMax($value, int $max):self
+    private function checkMax($value, int $max):self
     {
         if (is_string($value) && strlen($value) > $max)
             throw new Exception("maximum lenght for the paramter : " . $max);
@@ -188,7 +181,7 @@ abstract class Entity implements EntityInterface
      * @return Entity
      * @throws Exception
      */
-    private function verifRegex($value, string $regex):self
+    private function checkRegex($value, string $regex):self
     {
         if (!preg_match("#^" . $regex . "$#", $value))
             throw new Exception("the parameter doesn't correspond to the regex ");
@@ -202,7 +195,7 @@ abstract class Entity implements EntityInterface
      */
     public function save():self
     {
-        $this->verifParams();
+        $this->checkParams();
         //
         return ($this);
     }

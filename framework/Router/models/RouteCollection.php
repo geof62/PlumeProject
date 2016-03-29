@@ -110,4 +110,14 @@ class RouteCollection extends Collection
             return ($this->findR);
         return (NULL);
     }
+
+    public function generate(string $name, array $params):string
+    {
+        foreach ($this->data as $v)
+        {
+            if (($url = $v->generate($name, $params)) !== NULL)
+                return ($url);
+        }
+        return (NULL);
+    }
 }

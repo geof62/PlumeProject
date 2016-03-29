@@ -110,8 +110,15 @@ class Router
      * @param string $lang
      * @return string
      */
-    public function generate(string $name, bool $abs = true, string $lang = ""):string
+    public function generate(string $name, array $params = [], bool $abs = true, string $lang = ""):string
     {
-        // implémenter les noms dans les url
+        $url = "";
+        if ($abs === true)
+            $url = $this->config->get('site/baseUrl');
+        if ($lang != "")
+            $url .= $lang . '/';
+        if (($url2 = $this->routes->generate($name, $params)) !== NULL)
+            return ($url . $url2);
+        return (NULL);
     }
 }

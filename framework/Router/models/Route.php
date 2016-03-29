@@ -47,6 +47,12 @@ class Route extends RouteElement
     ];
 
     /**
+     * name of the route
+     * @var string
+     */
+    protected $name = "";
+
+    /**
      * Parameters in asc order in route pattern
      * @var array
      */
@@ -239,6 +245,13 @@ class Route extends RouteElement
         return ($this);
     }
 
+
+    public function setName(string $name):self
+    {
+        $this->name = $name;
+        return ($this);
+    }
+
     /**
      * get the controller name
      * @return string
@@ -339,5 +352,33 @@ class Route extends RouteElement
         if ($this->isFind())
             return ($this->findR);
         return (NULL);
+    }
+
+    /**
+     * generate a route url by given parameters
+     * @param string $name
+     * @param array $params
+     * @return string
+     */
+    public function generate(string $name, array $params):string
+    {
+        if ($this->name === $name)
+            return ($this->generateUrl($params));
+        return (NULL);
+    }
+
+    public function generateUrl(array $params):string
+    {
+        foreach ($this->params as $k => $v)
+        {
+            if (!array_key_exists($k, $params))
+                return (NULL);
+        }
+        if (count($params) == 0)
+            return ($this->route);
+        $url = preg_replace_callback("#(\\{[a-z]*\\})#", function($matches) use ($params) {
+            return ($params[$matches[1]]);
+        }, $this->route);
+        return ($url);
     }
 }
