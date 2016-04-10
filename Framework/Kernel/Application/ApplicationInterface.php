@@ -7,4 +7,6 @@ interface ApplicationInterface
     public function initRequest(Request $req);
 
     public function initResponse(Response $res);
+
+    public function setRequestBegin($ti);
 }

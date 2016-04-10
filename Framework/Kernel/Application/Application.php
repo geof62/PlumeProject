@@ -6,4 +6,5 @@ abstract class Application implements ApplicationInterface
 {
     protected $request;
     protected $response;
+    protected $requestBegin;
 }

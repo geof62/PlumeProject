@@ -4,12 +4,17 @@ namespace Framework\Kernel\Http;
 
 use Framework\Kernel\Exceptions\Exception;
 use Framework\Kernel\Types\Collection;
+use Framework\Kernel\Types\Real;
 use Framework\Kernel\Types\Str;
 use Framework\Kernel\Types\Type;
 use Framework\Kernel\Types\TypeException;
 
 final class Request extends \Framework\Kernel\Application\Request
 {
+    /* ***************************************************************
+    ** ********* Proprieties *****************************************
+     * ************************************************************ */
+
     /**
      * @var Collection
      */
@@ -46,6 +51,17 @@ final class Request extends \Framework\Kernel\Application\Request
     protected $method;
 
     /**
+     * @var bool
+     */
+    protected $tls = false;
+
+
+
+    /* ***************************************************************
+    ** ********* Constructor *****************************************
+     * ************************************************************ */
+
+    /**
      * if $no_inputs is true, the constructor doesn't put data from globals
      * Request constructor.
      * @param bool $no_inputs
@@ -62,6 +78,12 @@ final class Request extends \Framework\Kernel\Application\Request
             $this->setDataFile(file_get_contents('php://input'));
         }
     }
+
+
+
+    /* ***************************************************************
+    ** ************* Setters *****************************************
+     * ************************************************************ */
 
     /**
      * @param Collection|array $params
@@ -82,13 +104,16 @@ final class Request extends \Framework\Kernel\Application\Request
      */
     private function setServer(Collection $server):self
     {
-        if (!$server->keyExists('HTTP_METHOD'))
+        if (!$server->keyExists('REQUEST_METHOD'))
             throw new Exception("no method precised for the request");
-        $this->setMethod($server['HTTP_METHOD']);
+        $this->setMethod($server['REQUEST_METHOD']);
 
         if (!$server->keyExists('REQUEST_URI'))
             throw new Exception("no uri precised for the request");
         $this->setUri($server['REQUEST_URI']);
+
+        if ($server->keyExists('HTTPS'))
+            $this->setTls();
 
         return ($this);
     }
@@ -168,6 +193,108 @@ final class Request extends \Framework\Kernel\Application\Request
         return ($this);
     }
 
+    /**
+     * @return Request
+     */
+    public function setTls():self
+    {
+        $this->tls = true;
+        return ($this);
+    }
+
+
+    /* ***************************************************************
+    ** ************** Getter *****************************************
+     * ************************************************************ */
+
+    /**
+     * @param Str|Real|int|string $key
+     * @return null
+     */
+    public function getServer($key = NULL)
+    {
+        if ($key === NULL)
+            return ($this->parameters);
+        if (is_string($key))
+            $key = new Str($key);
+        elseif (is_int($key))
+            $key = new Real($key);
+        if ($this->parameters->keyExists($key))
+            return ($this->parameters[$key]);
+        return (NULL);
+    }
+
+    /**
+     * This function is used to get any data of the request
+     *
+     * The form of $key is : dataType.dataName,
+     * Where dataType equal to get, post, file or data
+     * The method search in the corresponding data if an element with a key dataName is found, else return NULL
+     *
+     * You can also precise $key : dataName
+     * In this case, the method search in all of the data a correspondence in the order : get, post, data, file
+     * return NULL if no correspondence found
+     *
+     * @param Str|string $key
+     * @return mixed|null
+     */
+    public function getData($key)
+    {
+        if (!($key instanceof Str))
+            $key = new Str($key);
+        $params = $key->explode('.');
+        if ($params->count() == 1)
+        {
+            if ($this->data_get->keyExists($params[0]))
+                return ($this->data_get[$key]);
+            else if ($this->data_post->keyExists($params[0]))
+                return ($this->data_post[$key]);
+            else if ($this->data->keyExists($params[0]))
+                return ($this->data[$key]);
+            else if ($this->data_file->keyExists($params[0]))
+                return ($this->data_file[$key]);
+            else
+                return (NULL);
+        }
+        else
+        {
+            if ($params[0] == "get" && $this->data_get->keyExists($params[1]))
+                return ($this->data_get[$key]);
+            else if ($params[0] == "post" && $this->data_post->keyExists($params[1]))
+                return ($this->data_post[$key]);
+            else if ($params[0] == "data" && $this->data->keyExists($params[1]))
+                return ($this->data[$key]);
+            else if ($params[0] == "file" && $this->data_file->keyExists($params[1]))
+                return ($this->data_file[$key]);
+            else
+                return (NULL);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTls():bool
+    {
+        return ($this->tls);
+    }
+
+    /**
+     * @return Str
+     */
+    public function getMethod():Str
+    {
+        return ($this->method);
+    }
+
+    /* ***************************************************************
+    ** ************** Others *****************************************
+     * ************************************************************ */
+
+
+    /* ***************************************************************
+    ** ************** Static *****************************************
+     * ************************************************************ */
 
     /**
      * Init a new Request.
