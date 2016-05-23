@@ -2,99 +2,157 @@
 
 namespace Framework\Kernel\Types;
 
-class Collection extends Type implements \ArrayAccess
+class Collection
+    extends Type
+    implements \Iterator
 {
-    public function __construct(array $arr = [])
+    protected $position = 0;
+    protected $childrenType = NULL;
+
+    public function __construct($value = NULL)
     {
-        $this->content = $arr; 
+        $this->set($value);
     }
-    
-    public function getNode($key)
+
+    public function dup()
     {
-        $key = Type::getOriginal($key);
-        if (array_key_exists($key, $this->g()))
-            return ($this->get()[$key]);
+        return (new self($this));
+    }
+
+    public function set($value)
+    {
+        if ($value === NULL)
+            $this->data = NULL;
+        else if (is_array($value) || $value instanceof self)
+        {
+            $this->data = [];
+            foreach ($value as $k => $v)
+            {
+                if ($this->childrenType !== NULL)
+                    if (!Convert::is_type($this->childrenType, $v))
+                        throw new TypeException("Values of the array must be of type : " . $this->childrenType);
+                $this->data[$k] = $v;
+            }
+        }
+        else
+            throw new TypeException("Invalid value given for the type Collection");
+        return ($this);
+    }
+
+    public function key_exists($key):bool
+    {
+        if ($key instanceof self)
+            return (false);
+        else if ($key instanceof Type)
+            $key = $key->g();
+        if (array_key_exists($key, $this->data))
+            return (true);
+        return (false);
+    }
+
+    public function get($key = NULL)
+    {
+        if ($key == NULL)
+            return (parent::get());
+        else
+        {
+            if ($key instanceof Type && !($key instanceof self))
+                $key = $key->get();
+            else if ($key instanceof Type)
+                throw new TypeException("Invalid key given : Collection can't be a key");
+            if ($this->key_exists($key))
+                return ($this->data[$key]);
+        }
         return (NULL);
     }
 
-    public function setNode($key, $value):self
+    public function g($key = NULL)
     {
-        $key = Type::getOriginal($key);
-        $this->content[$key] = $value;
-        return ($this);
+        return ($this->get($key));
     }
 
-    public function delNode($key)
+    /**
+     * list of parameters :
+     * $key : return the current key
+     * $value : return the current value (in referencing, you also can directly edit it)
+     * $tab : return an auto-referencing of the Collection
+     * others parameters, given in order to the callable
+     * @return Collection
+     * @throws TypeException
+     */
+    public function foreach():self
     {
-        $key = Type::getOriginal($key);
-        if ($this->keyExists($key))
-            unset($this->content[$key]);
-        return ($this);
-    }
-    
-    public function keyExists($key):bool
-    {
-        $key = Type::getOriginal($key);
-        if (array_key_exists($key, $this->get()))
-            return (TRUE);
-        return (FALSE);
-    }
-
-    public function implode($glue):Str
-    {
-        $glue = Type::getOriginal($glue);
-        $str = new Str();
-        foreach ($str as $v)
+        $args = func_get_args();
+        if (!is_callable($args[0]))
+            throw new TypeException("First paramter of foreach() have to be a callable");
+        foreach ($this as $k => $v)
         {
-            $str->add($v);
-            $str->add($glue);
+            $params = [
+                $k,
+                &$v,
+                $this,
+            ];
+            foreach ($args as $arg_k => $arg)
+            {
+                if ($k != 0)
+                    $params[] = $arg;
+            }
+            call_user_func_array($args[0], $params);
         }
-        $str->set(substr($str->g(), 0, - strlen($glue)));
-    }
-
-    public function inArray($value):bool
-    {
-        $value = Type::getOriginal($value);
-        foreach ($this->content as $v)
-        {
-            if ($v === $value)
-                return (TRUE);
-        }
-        return (FALSE);
-    }
-
-    public function merge(Collection $collection):self
-    {
-        $this->content = $this->merge($this->content, $collection->g());
         return ($this);
     }
 
-    public function count():Real
+    public function length():int
     {
-        return (new Real(count($this->content)));
+        if ($this->data === NULL)
+            return (0);
+        return (count($this->data));
     }
 
     /*
-     * implements array access methods
+     * Iterator functions
      */
 
-    public function offsetGet($offset)
+    /**
+     * Reinitialize the position
+     */
+    public function rewind()
     {
-        return ($this->get($offset));
+        $this->position = 0;
     }
 
-    public function offsetExists($offset)
+    /**
+     * get the current value
+     * @return mixed
+     */
+    public function current()
     {
-        return ($this->keyExists($offset));
+        return ($this->data[array_keys($this->data)[$this->position]]);
     }
 
-    public function offsetSet($offset, $value)
+    /**
+     * get the current key
+     * @return mixed
+     */
+    public function key()
     {
-        return ($this->setNode($offset, $value));
+        return (array_keys($this->data)[$this->position]);
     }
 
-    public function offsetUnset($offset)
+    /**
+     * go to the next key
+     */
+    public function next()
     {
-        return ($this->delNode($offset));
+        $this->position += 1;
+    }
+
+    /**
+     * return true if the current position is valid
+     * @return bool
+     */
+    public function valid()
+    {
+        return (isset($this->data[array_keys($this->data)[$this->position]]));
     }
 }

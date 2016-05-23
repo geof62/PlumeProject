@@ -3,23 +3,24 @@
 namespace Framework\Kernel\Types;
 
 abstract class Type
+    implements TypeInterface
 {
-    protected $content;
-
-    public function g()
-    {
-        return ($this->g());
-    }
+    protected $data;
 
     public function get()
     {
-        return ($this->content);
+        return ($this->data);
     }
 
-    public static function getOriginal($var)
+    public function g()
     {
-        if ($var instanceof Type)
-            return ($var->get());
-        return ($var);
+        return ($this->get());
+    }
+
+    public function isNull()
+    {
+        if ($this->data === NULL)
+            return (true);
+        return (false);
     }
 }
