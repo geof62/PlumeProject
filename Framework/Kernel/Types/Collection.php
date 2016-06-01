@@ -39,6 +39,20 @@ class Collection
         return ($this);
     }
 
+    public function add($value, Type $key = NULL):self
+    {
+        if ($key === NULL)
+            $this->data[] = $value;
+        else
+        {
+            if ($key instanceof Collection)
+                throw new TypeException("invalid key in collection");
+            $key = $key->get();
+            $this->data[$key] = $value;
+        }
+        return ($this);
+    }
+
     public function key_exists($key):bool
     {
         if ($key instanceof self)
